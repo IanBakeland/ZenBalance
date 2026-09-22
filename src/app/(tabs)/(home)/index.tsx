@@ -114,7 +114,9 @@ export default function HomeScreen() {
             </ThemedText>
             <PrimaryButton
               label={t.home.startSession}
-              onPress={() => router.push('/session')}
+              onPress={() =>
+                router.push({ pathname: '/session/ready', params: { durationSeconds: 25 * 60 } })
+              }
             />
           </>
         ) : (

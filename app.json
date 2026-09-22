@@ -33,7 +33,8 @@
         }
       ],
       "expo-sharing",
-      "expo-localization"
+      "expo-localization",
+      "expo-sensors"
     ],
     "experiments": {
       "typedRoutes": true,

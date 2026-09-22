@@ -55,9 +55,18 @@
   },
   "stages": ["Seedling", "Sprout", "Young plant", "Grown", "In bloom"],
   "session": {
-    "status": "STAY STILL · FOCUSING",
-    "placeholder": "Sensor check active (placeholder — Steps 4/6)",
-    "stop": "Stop session"
+    "stop": "Stop session",
+    "successTitle": "Session complete",
+    "cancelledTitle": "You ended it",
+    "movedTitle": "You moved",
+    "done": "Done",
+    "readyTitle": "Get ready to focus",
+    "readySubtitle": "Set the phone down, then let stillness do the rest.",
+    "readyStep1": "Lay it flat, screen facing up",
+    "readyStep2": "Leave the screen on — don't lock it",
+    "readyStep3": "Picking it up ends your session",
+    "readyCta": "Start focusing",
+    "readyClose": "Close"
   },
   "together": {
     "title": "Focus together",

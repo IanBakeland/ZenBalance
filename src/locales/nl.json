@@ -55,9 +55,18 @@
   },
   "stages": ["Zaailing", "Spruit", "Jonge plant", "Volgroeid", "In bloei"],
   "session": {
-    "status": "BLIJF STIL · FOCUS",
-    "placeholder": "Sensorcheck actief (placeholder — stap 4/6)",
-    "stop": "Sessie stoppen"
+    "stop": "Sessie stoppen",
+    "successTitle": "Sessie voltooid",
+    "cancelledTitle": "Je stopte zelf",
+    "movedTitle": "Je bewoog",
+    "done": "Klaar",
+    "readyTitle": "Klaar om te focussen",
+    "readySubtitle": "Leg je telefoon neer en laat de stilte het werk doen.",
+    "readyStep1": "Leg hem plat neer, met het scherm naar boven",
+    "readyStep2": "Laat het scherm aan — vergrendel het niet",
+    "readyStep3": "Oppakken beëindigt je sessie",
+    "readyCta": "Begin met focussen",
+    "readyClose": "Sluiten"
   },
   "together": {
     "title": "Samen focussen",

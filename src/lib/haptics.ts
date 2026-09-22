@@ -36,3 +36,23 @@ export function hapticCommit() {
   }
   return Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 }
+
+/**
+ * The phone just started moving, mid-session — a heads-up before the session
+ * actually fails, not the failure itself. STYLE_GUIDE.md section 5: should
+ * register as "oops," not an alarm, so this stays one tier below `hapticFailure`.
+ */
+export function hapticMovementWarning() {
+  if (Platform.OS === 'android') {
+    return Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Long_Press);
+  }
+  return Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+}
+
+/** The session actually failed — movement was sustained past the debounce window. */
+export function hapticFailure() {
+  if (Platform.OS === 'android') {
+    return Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Reject);
+  }
+  return Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+}

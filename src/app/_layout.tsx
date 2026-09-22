@@ -51,6 +51,9 @@ export default function RootLayout() {
         </Stack.Protected>
         <Stack.Protected guard={hasCompletedOnboarding}>
           <Stack.Screen name="(tabs)" />
+          {/* Outside (tabs) on purpose — see src/app/session/_layout.tsx — so the
+              native tab bar never renders underneath the focus session. */}
+          <Stack.Screen name="session" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
         </Stack.Protected>
       </Stack>
     </ThemeProvider>
