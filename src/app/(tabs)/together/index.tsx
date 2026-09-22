@@ -6,10 +6,12 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { BottomTabInset, Spacing } from '@/constants/theme';
+import { useLocalization } from '@/hooks/useLocalization';
 
 export default function TogetherHomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useLocalization();
 
   return (
     <ThemedView
@@ -20,27 +22,27 @@ export default function TogetherHomeScreen() {
           paddingBottom: insets.bottom + BottomTabInset + Spacing.three,
         },
       ]}>
-      <Stack.Screen options={{ title: 'Together', headerShown: false }} />
+      <Stack.Screen options={{ headerShown: false }} />
 
       <View style={styles.header}>
-        <ThemedText type="heading">Focus Together</ThemedText>
+        <ThemedText type="heading">{t.together.title}</ThemedText>
         <ThemedText type="default" themeColor="textSecondary">
-          Share one plant with friends. Everyone must stay still!
+          {t.together.subtitle}
         </ThemedText>
       </View>
 
       <View style={styles.content}>
         <ThemedView type="surface" style={styles.card}>
           <ThemedText style={styles.icon}>🪴</ThemedText>
-          <ThemedText type="subtitle">Group Session</ThemedText>
+          <ThemedText type="subtitle">{t.together.cardTitle}</ThemedText>
           <ThemedText type="caption" themeColor="textSecondary" style={styles.cardHint}>
-            Phase 2 placeholder — will connect to Firebase once Phase 1 is validated.
+            {t.together.cardHint}
           </ThemedText>
         </ThemedView>
       </View>
 
       <PrimaryButton
-        label="Join Demo Room (DEMO1)"
+        label={t.together.joinDemo}
         onPress={() => router.push('/together/DEMO1')}
       />
     </ThemedView>

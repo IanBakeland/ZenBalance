@@ -4,19 +4,28 @@ import { ThemedText } from './ThemedText';
 
 import { MinTapTarget, PillRadius, Spacing, type ThemeMode } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { hapticTap } from '@/lib/haptics';
 
 export type PrimaryButtonProps = Omit<PressableProps, 'children' | 'style'> & {
   label: string;
   mode?: ThemeMode;
 };
 
-/** The pill-shaped primary action used on every screen. Course Pressable pattern. */
-export function PrimaryButton({ label, mode, ...rest }: PrimaryButtonProps) {
+/**
+ * The pill-shaped primary action used on every screen. Course Pressable pattern.
+ * Carries the app's one unconditional haptic: a single light tap. Screens that
+ * mark a real commitment (onboarding done, plant chosen) add `hapticCommit` on top.
+ */
+export function PrimaryButton({ label, mode, onPress, ...rest }: PrimaryButtonProps) {
   const theme = useTheme(mode);
 
   return (
     <Pressable
       accessibilityRole="button"
+      onPress={(event) => {
+        hapticTap();
+        onPress?.(event);
+      }}
       style={({ pressed }) => [
         styles.button,
         { backgroundColor: theme.plantPrimary, opacity: pressed ? 0.5 : 1.0 },

@@ -8,7 +8,7 @@ A pomodoro focus app where staying still grows a plant. Built with React Native 
 
 **Read `AGENT_INSTRUCTIONS.md` first, in full, before anything below.** It sets the required project structure, navigation, and state-management conventions (taken from the student's own course material) that every step in this plan must be implemented through.
 
-Section 7 ("Full step-by-step plan") is the complete, checkbox-by-checkbox plan — start there, at Phase 1, Step 1. Phase 1 is ordered **UI first, sensors last**: scaffold the app, then build onboarding (language + tutorial + plant picker), the home screen, and a session screen with a manual Stop button and a mocked "timer reaches zero = success" rule — all clickable and demoable before the accelerometer is wired in at all. Only once that full UI loop works do you replace the mocked success rule with the real stillness-detection sensor (Step 6). Work through the checkboxes in order; don't skip the "test" items. Do not start Phase 2 (group sessions) or Phase 3 (Skia visual polish) until every Phase 1 checkbox is checked and the Phase 1 checkpoint passes on a real device.
+Section 7 ("Full step-by-step plan") is the complete, checkbox-by-checkbox plan — start there, at Phase 1, Step 1. Phase 1 is ordered **UI first, sensors last**: scaffold the app, then build onboarding (language + tutorial), the home screen with its plant picker, and a session screen with a manual Stop button and a mocked "timer reaches zero = success" rule — all clickable and demoable before the accelerometer is wired in at all. Only once that full UI loop works do you replace the mocked success rule with the real stillness-detection sensor (Step 6). Work through the checkboxes in order; don't skip the "test" items. Do not start Phase 2 (group sessions) or Phase 3 (Skia visual polish) until every Phase 1 checkbox is checked and the Phase 1 checkpoint passes on a real device.
 
 > **Note on language:** this document and the accompanying `STYLE_GUIDE.md` / `AGENT_INSTRUCTIONS.md` are written in English, since that matches the Expo/React Native ecosystem, package names and most tutorials your coding agent will reference. All in-app copy shown to end users should exist in both Dutch and English (see [Onboarding & language](#onboarding--language) below).
 
@@ -45,7 +45,7 @@ The core interaction (proving focus by literally leaving the phone alone) only m
 ### 2.3 Plant growth & droplets
 
 - A session that completes without movement earns **droplets**, proportional to session length (e.g. roughly 1 droplet per 5 minutes of stillness — tune this during playtesting).
-- At first launch, the user picks a plant to grow: a small plant needs few total droplets (finishes quickly, good for short-term motivation), a large plant needs many more droplets and therefore several longer sessions.
+- The user picks a plant to grow **on the Home screen**, not during onboarding: a small plant needs few total droplets (finishes quickly, good for short-term motivation), a large plant needs many more droplets and therefore several longer sessions. Home is also where they **change** plants later — putting the picker in onboarding would make that first choice permanent. Droplets are a global total, so switching plants keeps existing progress and only changes the bloom threshold.
 - Growth stages (suggested minimum: 4–5): seedling → sprout → small plant → mature plant → blooming plant. Each stage swap is just an asset/illustration change driven by a `total droplets / droplets needed` ratio — no physics engine needed.
 - Give each growth stage its own **atmosphere**, not just plant size: softer/brighter light, a couple of butterflies, a fuller pot — small layered illustration details per stage. This is still just swapping static layered images; it does not need Skia.
 - Failing a session (movement) simply loses that session's droplet — it does not reset existing progress.
@@ -57,7 +57,7 @@ The core interaction (proving focus by literally leaving the phone alone) only m
 
 ### 2.5 Onboarding & language
 
-- On first launch, show a short tutorial: place the phone down → earn droplets → choose a plant.
+- On first launch: **welcome + language picker first**, then a short tutorial explaining the mechanic (place the phone down → earn droplets → the plant grows). Two screens, no plant picker — that lives on Home (see 2.3).
 - As part of that same tutorial, ask the user to pick a language: Dutch or English. Use `expo-localization` to read the device's system language and pre-select it as the default; let the user override it.
 - Persist `hasCompletedOnboarding` and `languagePreference` in `AsyncStorage` so the tutorial only ever shows once.
 - Keep translated strings in two simple JSON dictionaries (`locales/nl.json`, `locales/en.json`) read through a small i18n hook/context — no need for a heavy i18n library for a project this size.
@@ -229,18 +229,20 @@ This phase is deliberately ordered **UI first, sensors last**: build every scree
 - [ ] Build the empty route skeleton from `AGENT_INSTRUCTIONS.md`'s route map: the onboarding Stack, the `(home)` and `together` tabs (each with their own nested Stack), all with placeholder content.
 - [ ] Confirm the tab bar renders natively, both tabs are reachable, and the onboarding Stack shows first (it can be hardcoded to always show for now — the real `hasCompletedOnboarding` gate comes in Step 2).
 
-**Step 2 — Onboarding UI: language, tutorial, plant picker**
-- [ ] Build the 3-step onboarding flow as pure UI: mechanic explanation (tutorial) → plant picker (small/medium/large, static illustrations) → language picker (Dutch/English), as the screens under `src/app/onboarding/` from the route map.
+**Step 2 — Onboarding UI: language, then tutorial**
+- [ ] Build the 2-step onboarding flow as pure UI: welcome + language picker (Dutch/English) → mechanic explanation (tutorial), as the screens under `src/app/onboarding/` from the route map. Language comes first so the tutorial can be read in the chosen language. The plant picker is **not** part of onboarding — see Step 3.
 - [ ] Read the device locale via `expo-localization` to pre-select NL or EN as the default; let the user tap to override it.
 - [ ] Add `locales/en.json` and `locales/nl.json` with the strings used so far, plus a small `useLocalization()` hook that reads the store's `languagePreference`.
-- [ ] Set up `src/hooks/use-zenbalance-store.ts` per `AGENT_INSTRUCTIONS.md` section 1.3 (Zustand + `persist` + AsyncStorage) with at least `hasCompletedOnboarding`, `languagePreference`, and `chosenPlantId`; call its `completeOnboarding` action when onboarding finishes.
+- [ ] Set up `src/hooks/use-zenbalance-store.ts` per `AGENT_INSTRUCTIONS.md` section 1.3 (Zustand + `persist` + AsyncStorage) with at least `hasCompletedOnboarding`, `languagePreference`, and `chosenPlantId`; call its `completeOnboarding(language)` action when onboarding finishes. `chosenPlantId` stays `null` until Step 3's picker sets it.
 - [ ] Wire the root layout to actually gate on `hasCompletedOnboarding` now (show onboarding vs. the tab navigator).
-- [ ] **Test:** fresh-install the app (clear storage), confirm onboarding shows once and never again after completing it, confirm the language toggle actually changes visible copy, confirm the plant choice is remembered after a restart.
+- [ ] **Test:** fresh-install the app (clear storage), confirm onboarding shows once and never again after completing it, and confirm the language choice actually changes visible copy — including on the tutorial screen that follows it.
 
-**Step 3 — Home screen UI**
+**Step 3 — Home screen UI + plant picker**
+- [ ] Add `src/data/plants.ts` (a `Plant` type mirroring the course's `Coffee`, one entry per size, with each plant's `dropletsToBloom` threshold).
 - [ ] Build `components/PlantView.tsx` rendering the chosen plant at a **hardcoded/mocked growth stage** for now (real droplet-driven growth comes in Step 5).
-- [ ] Build the Home screen: `PlantView` + a "Start session" button + a session-duration picker.
-- [ ] **Test:** navigate Home → pick a duration → see the button ready to start; nothing needs to actually start a session yet.
+- [ ] Build the plant picker as its own screen in the Home stack (`(home)/plants.tsx`, a `FlashList` per `AGENT_INSTRUCTIONS.md` section 1.4). It sets `chosenPlantId`, and is reachable both from the empty state and from a "change plant" control, so the choice is never permanent.
+- [ ] Build the Home screen: `PlantView` + a "Start session" button + a session-duration picker. When `chosenPlantId` is `null` (every freshly onboarded user), show a "choose your plant" empty state instead of the plant and the start button.
+- [ ] **Test:** finish onboarding → land on the empty state → pick a plant → confirm it renders and survives a restart → change to a different plant and confirm droplets carry over → pick a duration and see the button ready to start; nothing needs to actually start a session yet.
 
 **Step 4 — Session screen UI (manual control only, no sensor yet)**
 - [ ] Create `hooks/useSessionTimer.ts`: store `startTime = Date.now()` plus the chosen `durationSeconds`; on each tick compute remaining time as `durationSeconds - (Date.now() - startTime) / 1000` (never count raw ticks, they drift).
@@ -283,6 +285,7 @@ This phase is deliberately ordered **UI first, sensors last**: build every scree
 - [ ] **Test:** share to a real target (e.g. Messages/WhatsApp) on-device and confirm the image looks correct.
 
 **Step 11 — Haptics**
+> UI haptics (selection ticks on the language/plant pickers, a light tap on primary buttons, a soft confirm when onboarding finishes or a plant is chosen) were pulled forward into Steps 2–3 and live in `src/lib/haptics.ts` — that file is the one place to tune intensity. This step is the remaining session-event half.
 - [ ] Add `expo-haptics` at: droplet earned, session success, movement/failure warning, and (distinctly, more subtly) manual stop.
 - [ ] **Test:** tune intensity/pattern by feel on-device until success feels rewarding and failure feels like a gentle "oops," not an alarm.
 

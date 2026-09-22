@@ -6,11 +6,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
+import { useLocalization } from '@/hooks/useLocalization';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function SessionScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useLocalization();
   // The session screen is the one screen on the separate true-black palette
   // (STYLE_GUIDE.md section 2), regardless of the app's light/dark mode.
   const sessionTheme = useTheme('session');
@@ -25,12 +27,12 @@ export default function SessionScreen() {
           paddingBottom: insets.bottom + Spacing.four,
         },
       ]}>
-      <Stack.Screen options={{ title: 'Session', headerShown: false }} />
+      <Stack.Screen options={{ headerShown: false }} />
       <StatusBar style="light" />
 
       <View>
         <ThemedText mode="session" type="caption" themeColor="textSecondary">
-          STAY STILL • FOCUSING
+          {t.session.status}
         </ThemedText>
       </View>
 
@@ -43,7 +45,7 @@ export default function SessionScreen() {
           🌿
         </ThemedText>
         <ThemedText mode="session" type="caption" themeColor="plantGlow">
-          Sensor check active (placeholder — Steps 4/6)
+          {t.session.placeholder}
         </ThemedText>
       </View>
 
@@ -55,7 +57,7 @@ export default function SessionScreen() {
         ]}
         onPress={() => router.back()}>
         <ThemedText mode="session" type="small" themeColor="textSecondary">
-          Stop Session
+          {t.session.stop}
         </ThemedText>
       </Pressable>
     </ThemedView>

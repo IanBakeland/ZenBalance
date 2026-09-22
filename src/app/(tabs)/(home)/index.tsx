@@ -1,19 +1,27 @@
-import { StyleSheet, Pressable, View } from 'react-native';
-import { useRouter, Stack } from 'expo-router';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { PlantView } from '@/components/PlantView';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, MinTapTarget, Spacing } from '@/constants/theme';
+import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
+import { findPlant } from '@/data/plants';
+import { useLocalization } from '@/hooks/useLocalization';
+import { useTheme } from '@/hooks/use-theme';
 import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
 
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const theme = useTheme();
+  const { t } = useLocalization();
   const totalDroplets = useZenBalanceStore((s) => s.totalDroplets);
   const chosenPlantId = useZenBalanceStore((s) => s.chosenPlantId);
   const resetOnboarding = useZenBalanceStore((s) => s.resetOnboarding);
+  const plant = findPlant(chosenPlantId);
 
   return (
     <ThemedView
@@ -24,43 +32,86 @@ export default function HomeScreen() {
           paddingBottom: insets.bottom + BottomTabInset + Spacing.three,
         },
       ]}>
-      <Stack.Screen options={{ title: 'ZenBalance', headerShown: false }} />
+      <Stack.Screen options={{ headerShown: false }} />
 
-      {/* Top Header stats */}
       <View style={styles.header}>
-        <ThemedText type="smallBold" themeColor="plantPrimary">
-          Plant: {chosenPlantId ?? 'None'}
-        </ThemedText>
         <ThemedText type="smallBold" themeColor="droplet">
-          💧 {totalDroplets} Droplets
+          💧 {totalDroplets} {t.home.droplets}
         </ThemedText>
+        {plant ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/plants')}
+            style={({ pressed }) => [styles.changePlant, { opacity: pressed ? 0.5 : 1.0 }]}>
+            <ThemedText type="caption" themeColor="textSecondary">
+              {t.home.changePlant}
+            </ThemedText>
+            <SymbolView
+              name={{ ios: 'arrow.triangle.2.circlepath', android: 'autorenew', web: 'autorenew' }}
+              size={15}
+              tintColor={theme.textSecondary}
+            />
+          </Pressable>
+        ) : null}
       </View>
 
-      {/* Center Plant View Placeholder */}
-      <View style={styles.plantContainer}>
-        <ThemedView type="surface" style={styles.plantCard}>
-          <ThemedText style={styles.plantEmoji}>🌱</ThemedText>
-          <ThemedText type="subtitle">Seedling</ThemedText>
-          <ThemedText type="caption" themeColor="textSecondary">
-            PlantView placeholder (Step 3)
-          </ThemedText>
-        </ThemedView>
+      <View style={styles.center}>
+        {plant ? (
+          // Step 5 replaces the hardcoded stage with one derived from totalDroplets.
+          <PlantView plant={plant} stage={0} />
+        ) : (
+          <View style={styles.empty}>
+            <ThemedView type="surfaceMuted" style={styles.emptyPot}>
+              <ThemedText style={styles.emptyIcon}>🫙</ThemedText>
+            </ThemedView>
+            <ThemedText type="subtitle" style={styles.centered}>
+              {t.home.noPlantTitle}
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary" style={styles.centered}>
+              {t.home.noPlantBody}
+            </ThemedText>
+          </View>
+        )}
       </View>
 
-      {/* Controls & Actions */}
       <View style={styles.actions}>
-        <ThemedText type="caption" themeColor="textSecondary">
-          Duration: 25 minutes
-        </ThemedText>
+        {plant ? (
+          <>
+            <View style={styles.progressRow}>
+              <ThemedText type="caption" themeColor="textSecondary">
+                {totalDroplets} / {plant.dropletsToBloom} {t.home.toBloom}
+              </ThemedText>
+            </View>
+            <ThemedView type="surfaceMuted" style={styles.progressTrack}>
+              <View
+                style={[
+                  styles.progressFill,
+                  {
+                    backgroundColor: theme.plantAccent,
+                    width: `${Math.min(100, (totalDroplets / plant.dropletsToBloom) * 100)}%`,
+                  },
+                ]}
+              />
+            </ThemedView>
 
-        <PrimaryButton label="Start Session" onPress={() => router.push('/session')} />
+            <ThemedText type="caption" themeColor="textSecondary" style={styles.duration}>
+              {t.home.duration}: 25 min
+            </ThemedText>
+            <PrimaryButton
+              label={t.home.startSession}
+              onPress={() => router.push('/session')}
+            />
+          </>
+        ) : (
+          <PrimaryButton label={t.home.choosePlant} onPress={() => router.push('/plants')} />
+        )}
 
         <Pressable
           accessibilityRole="button"
           style={({ pressed }) => [styles.resetButton, { opacity: pressed ? 0.5 : 1.0 }]}
           onPress={resetOnboarding}>
           <ThemedText type="caption" themeColor="textSecondary">
-            Reset Onboarding (Debug)
+            {t.home.resetOnboarding}
           </ThemedText>
         </Pressable>
       </View>
@@ -78,28 +129,57 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  plantContainer: {
+  changePlant: {
+    minHeight: MinTapTarget,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
+    paddingLeft: Spacing.three,
+  },
+  center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  plantCard: {
-    width: 240,
-    height: 240,
-    borderRadius: Spacing.six,
-    justifyContent: 'center',
+  empty: {
     alignItems: 'center',
     gap: Spacing.two,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
   },
-  plantEmoji: {
-    fontSize: 64,
+  emptyPot: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.three,
+  },
+  emptyIcon: {
+    fontSize: 72,
+    opacity: 0.55,
+  },
+  centered: {
+    textAlign: 'center',
+    maxWidth: 300,
   },
   actions: {
     gap: Spacing.two,
     alignItems: 'center',
+  },
+  progressRow: {
+    alignItems: 'center',
+  },
+  progressTrack: {
+    width: '100%',
+    height: 6,
+    borderRadius: PillRadius,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: PillRadius,
+  },
+  duration: {
+    marginTop: Spacing.two,
   },
   resetButton: {
     minHeight: MinTapTarget,
