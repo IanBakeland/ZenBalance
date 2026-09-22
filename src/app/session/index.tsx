@@ -22,10 +22,13 @@ import { useReduceMotion } from '@/hooks/use-reduce-motion';
 import { useSessionTimer, type SessionOutcome } from '@/hooks/useSessionTimer';
 import { useStillnessDetector } from '@/hooks/useStillnessDetector';
 import { useTheme } from '@/hooks/use-theme';
+import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
 import { hapticCommit, hapticFailure, hapticMovementWarning, hapticSelect } from '@/lib/haptics';
 
-// Home doesn't have a duration picker yet (Step 3 leftover) — 25 min matches its label.
+// Deep-link fallback only — the duration picker always supplies both params
+// together, matching its 25-minute / 3-droplet tier.
 const DEFAULT_DURATION_SECONDS = 25 * 60;
+const DEFAULT_DROPLETS_REWARD = 3;
 
 function formatRemaining(totalSeconds: number) {
   const seconds = Math.ceil(totalSeconds);
@@ -45,8 +48,13 @@ export default function SessionScreen() {
   const { t } = useLocalization();
   const sessionTheme = useTheme('session');
   const reduceMotion = useReduceMotion();
-  const { durationSeconds: durationParam } = useLocalSearchParams<{ durationSeconds?: string }>();
+  const { durationSeconds: durationParam, droplets: dropletsParam } = useLocalSearchParams<{
+    durationSeconds?: string;
+    droplets?: string;
+  }>();
   const durationSeconds = Number(durationParam) || DEFAULT_DURATION_SECONDS;
+  const dropletsReward = Number(dropletsParam) || DEFAULT_DROPLETS_REWARD;
+  const addDroplets = useZenBalanceStore((s) => s.addDroplets);
 
   // Screen must not auto-lock for the whole session (PROJECT_PLAN.md Step 7) —
   // released automatically the moment this screen unmounts.
@@ -66,9 +74,10 @@ export default function SessionScreen() {
   }, [isStill, finish]);
 
   // Step 11 haptics: a light heads-up the moment movement starts, a bigger
-  // one once it's confirmed as a real failure, and — distinctly softer —
-  // one for a deliberate manual Stop. (No "droplet earned" haptic yet:
-  // that needs Step 5's droplet-awarding logic, which isn't wired up.)
+  // one once it's confirmed as a real failure, and — distinctly softer — one
+  // for a deliberate manual Stop. Droplets are only ever awarded on success,
+  // so "droplet earned" and "session success" are the same instant — one
+  // `hapticCommit()` covers both rather than stacking two pulses back to back.
   useEffect(() => {
     if (isWarning) hapticMovementWarning();
   }, [isWarning]);
@@ -78,6 +87,31 @@ export default function SessionScreen() {
     else if (outcome === 'moved') hapticFailure();
     else if (outcome === 'cancelled') hapticSelect();
   }, [outcome]);
+
+  // The actual reward (Step 5, finally wired up): `finish()` only ever fires
+  // once per session, so `outcome` only ever transitions to 'success' once —
+  // safe to award droplets directly off that transition.
+  useEffect(() => {
+    if (outcome === 'success') addDroplets(dropletsReward);
+  }, [outcome, dropletsReward, addDroplets]);
+
+  // A quiet one-shot entrance for the reward line — not a loop, just a soft
+  // arrival, in keeping with STYLE_GUIDE.md's "quiet exhale, not a
+  // celebration" rule for reward moments.
+  const rewardPop = useSharedValue(0);
+  useEffect(() => {
+    if (outcome !== 'success') return;
+    if (reduceMotion) {
+      rewardPop.value = 1;
+      return;
+    }
+    rewardPop.value = withTiming(1, { duration: 450, easing: Easing.out(Easing.cubic) });
+  }, [outcome, reduceMotion, rewardPop]);
+
+  const rewardStyle = useAnimatedStyle(() => ({
+    opacity: rewardPop.value,
+    transform: [{ scale: interpolate(rewardPop.value, [0, 1], [0.9, 1]) }],
+  }));
 
   // No looping animation running for the whole session (that's what cost
   // battery). Instead the countdown itself gets a soft one-shot settle each
@@ -135,13 +169,26 @@ export default function SessionScreen() {
                 tintColor={sessionTheme.background}
               />
             </View>
-            <ThemedText mode="session" type="subtitle" style={styles.outcomeTitle}>
-              {outcome === 'success'
-                ? t.session.successTitle
-                : outcome === 'moved'
-                  ? t.session.movedTitle
-                  : t.session.cancelledTitle}
-            </ThemedText>
+            <View style={styles.outcomeTextGroup}>
+              <ThemedText mode="session" type="subtitle" style={styles.outcomeTitle}>
+                {outcome === 'success'
+                  ? t.session.successTitle
+                  : outcome === 'moved'
+                    ? t.session.movedTitle
+                    : t.session.cancelledTitle}
+              </ThemedText>
+              {outcome === 'success' ? (
+                <Animated.View style={rewardStyle}>
+                  <ThemedText mode="session" type="default" themeColor="dropletGlow">
+                    💧 +{dropletsReward} {t.home.droplets}
+                  </ThemedText>
+                </Animated.View>
+              ) : (
+                <ThemedText mode="session" type="caption" themeColor="textSecondary">
+                  {t.session.resultNoDroplets}
+                </ThemedText>
+              )}
+            </View>
           </>
         ) : (
           <Animated.View style={timerStyle}>
@@ -153,7 +200,13 @@ export default function SessionScreen() {
       </View>
 
       {outcome ? (
-        <PrimaryButton mode="session" label={t.session.done} onPress={() => router.back()} />
+        <PrimaryButton
+          mode="session"
+          label={t.session.done}
+          // The duration picker already popped itself when the session
+          // started (see duration.tsx), so this lands straight on Home.
+          onPress={() => router.dismissTo('/')}
+        />
       ) : (
         <Pressable
           accessibilityRole="button"
@@ -189,6 +242,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 0 },
+  },
+  outcomeTextGroup: {
+    alignItems: 'center',
+    gap: Spacing.two,
   },
   outcomeTitle: {
     textAlign: 'center',

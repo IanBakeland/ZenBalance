@@ -30,7 +30,6 @@
     "choosePlant": "Choose your plant",
     "changePlant": "Change plant",
     "startSession": "Start session",
-    "duration": "Duration",
     "droplets": "droplets",
     "toBloom": "to bloom",
     "resetOnboarding": "Reset onboarding (debug)"
@@ -40,13 +39,23 @@
     "intro": "A smaller plant blooms in a few sessions. A bigger one asks for a season of them.",
     "dropletsToBloom": "droplets to bloom",
     "growingNow": "Growing now",
-    "keepDroplets": "Your droplets come with you when you switch.",
+    "confirmSwitchTitle": "Change plant?",
+    "confirmSwitchBody": "Your current water progress will be lost if you switch plants. You'll have to start again with the new plant.",
+    "confirmSwitchCancel": "Cancel",
+    "confirmSwitchContinue": "Continue",
     "basilName": "Basil",
     "basilBlurb": "Quick and generous. Ready to bloom after a handful of sessions.",
     "fernName": "Fern",
     "fernBlurb": "Patient. Unfurls over a week or two of steady focus.",
     "monsteraName": "Monstera",
     "monsteraBlurb": "The long game. A whole season of stillness, one leaf at a time."
+  },
+  "duration": {
+    "headerTitle": "Choose your timer",
+    "intro": "Longer sessions earn more water — pick how long you'll focus.",
+    "seconds": "sec",
+    "minutes": "min",
+    "testBadge": "Test"
   },
   "sizes": {
     "small": "Small",
@@ -56,9 +65,10 @@
   "stages": ["Seedling", "Sprout", "Young plant", "Grown", "In bloom"],
   "session": {
     "stop": "Stop session",
-    "successTitle": "Session complete",
+    "successTitle": "Focus complete",
     "cancelledTitle": "You ended it",
     "movedTitle": "You moved",
+    "resultNoDroplets": "You didn't earn any droplets this time.",
     "done": "Done",
     "readyTitle": "Get ready to focus",
     "readySubtitle": "Set the phone down, then let stillness do the rest.",

@@ -1,9 +1,11 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { BottomTabInset, MinTapTarget, Spacing } from '@/constants/theme';
@@ -11,14 +13,41 @@ import { Plants, type Plant } from '@/data/plants';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useTheme } from '@/hooks/use-theme';
 import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { hapticCommit } from '@/lib/haptics';
+import { hapticCommit, hapticSelect } from '@/lib/haptics';
 
 export default function PlantPickerScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useLocalization();
   const chosenPlantId = useZenBalanceStore((s) => s.chosenPlantId);
-  const choosePlant = useZenBalanceStore((s) => s.choosePlant);
+  const totalDroplets = useZenBalanceStore((s) => s.totalDroplets);
+  const switchPlant = useZenBalanceStore((s) => s.switchPlant);
+
+  // Switching plants while the current one has progress resets that progress —
+  // confirm first rather than losing it silently.
+  const [pendingPlant, setPendingPlant] = useState<Plant | null>(null);
+
+  function selectPlant(plant: Plant) {
+    if (plant.id === chosenPlantId) {
+      router.back();
+      return;
+    }
+    if (totalDroplets > 0) {
+      setPendingPlant(plant);
+      return;
+    }
+    switchPlant(plant.id, false);
+    hapticCommit();
+    router.back();
+  }
+
+  function confirmSwitch() {
+    if (!pendingPlant) return;
+    switchPlant(pendingPlant.id, true);
+    hapticCommit();
+    setPendingPlant(null);
+    router.back();
+  }
 
   return (
     <ThemedView style={styles.container}>
@@ -36,11 +65,6 @@ export default function PlantPickerScreen() {
             <ThemedText type="default" themeColor="textSecondary">
               {t.plants.intro}
             </ThemedText>
-            {chosenPlantId ? (
-              <ThemedText type="caption" themeColor="plantPrimary">
-                {t.plants.keepDroplets}
-              </ThemedText>
-            ) : null}
           </View>
         }
         ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -48,14 +72,46 @@ export default function PlantPickerScreen() {
           <PlantOption
             plant={item}
             isChosen={item.id === chosenPlantId}
-            onPress={() => {
-              choosePlant(item.id);
-              hapticCommit();
-              router.back();
-            }}
+            onPress={() => selectPlant(item)}
           />
         )}
       />
+
+      <Modal
+        visible={pendingPlant !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPendingPlant(null)}>
+        <Pressable
+          style={styles.backdrop}
+          accessibilityRole="button"
+          onPress={() => setPendingPlant(null)}>
+          <Pressable style={styles.dialog} onPress={() => {}}>
+            <ThemedView type="surface" style={styles.dialogCard}>
+              <ThemedText type="heading">{t.plants.confirmSwitchTitle}</ThemedText>
+              <ThemedText type="default" themeColor="textSecondary">
+                {t.plants.confirmSwitchBody}
+              </ThemedText>
+              <View style={styles.dialogActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => {
+                    hapticSelect();
+                    setPendingPlant(null);
+                  }}
+                  style={({ pressed }) => [styles.cancelButton, { opacity: pressed ? 0.5 : 1.0 }]}>
+                  <ThemedText type="smallBold" themeColor="textSecondary">
+                    {t.plants.confirmSwitchCancel}
+                  </ThemedText>
+                </Pressable>
+                <View style={styles.continueButton}>
+                  <PrimaryButton label={t.plants.confirmSwitchContinue} onPress={confirmSwitch} />
+                </View>
+              </View>
+            </ThemedView>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ThemedView>
   );
 }
@@ -149,5 +205,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.two,
+  },
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(20, 18, 14, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.four,
+  },
+  dialog: {
+    width: '100%',
+    maxWidth: 340,
+  },
+  dialogCard: {
+    borderRadius: Spacing.five,
+    padding: Spacing.four,
+    gap: Spacing.three,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 8 },
+  },
+  dialogActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: Spacing.three,
+    marginTop: Spacing.one,
+  },
+  cancelButton: {
+    minHeight: MinTapTarget,
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.two,
+  },
+  continueButton: {
+    flex: 1,
   },
 });

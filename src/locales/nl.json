@@ -30,7 +30,6 @@
     "choosePlant": "Kies je plant",
     "changePlant": "Plant wisselen",
     "startSession": "Start sessie",
-    "duration": "Duur",
     "droplets": "druppels",
     "toBloom": "tot bloei",
     "resetOnboarding": "Onboarding resetten (debug)"
@@ -40,13 +39,23 @@
     "intro": "Een kleinere plant bloeit na een paar sessies. Een grotere vraagt er een seizoen vol.",
     "dropletsToBloom": "druppels tot bloei",
     "growingNow": "Groeit nu",
-    "keepDroplets": "Je druppels gaan met je mee als je wisselt.",
+    "confirmSwitchTitle": "Plant wisselen?",
+    "confirmSwitchBody": "Je huidige waterhoeveelheid gaat verloren als je van plant wisselt. Je begint opnieuw met de nieuwe plant.",
+    "confirmSwitchCancel": "Annuleren",
+    "confirmSwitchContinue": "Doorgaan",
     "basilName": "Basilicum",
     "basilBlurb": "Snel en gul. Klaar om te bloeien na een handvol sessies.",
     "fernName": "Varen",
     "fernBlurb": "Geduldig. Ontvouwt zich in een week of twee van rustige focus.",
     "monsteraName": "Monstera",
     "monsteraBlurb": "De lange weg. Een heel seizoen stilte, blad voor blad."
+  },
+  "duration": {
+    "headerTitle": "Kies je timer",
+    "intro": "Langere sessies leveren meer water op — kies hoelang je gaat focussen.",
+    "seconds": "sec",
+    "minutes": "min",
+    "testBadge": "Test"
   },
   "sizes": {
     "small": "Klein",
@@ -56,9 +65,10 @@
   "stages": ["Zaailing", "Spruit", "Jonge plant", "Volgroeid", "In bloei"],
   "session": {
     "stop": "Sessie stoppen",
-    "successTitle": "Sessie voltooid",
+    "successTitle": "Focus voltooid",
     "cancelledTitle": "Je stopte zelf",
     "movedTitle": "Je bewoog",
+    "resultNoDroplets": "Je hebt deze keer geen druppels verdiend.",
     "done": "Klaar",
     "readyTitle": "Klaar om te focussen",
     "readySubtitle": "Leg je telefoon neer en laat de stilte het werk doen.",

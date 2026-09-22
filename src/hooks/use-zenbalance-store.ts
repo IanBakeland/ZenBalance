@@ -15,14 +15,26 @@ export interface ZenBalanceState {
   languagePreference: Language;
   chosenPlantId: string | null;
   totalDroplets: number;
+  /**
+   * Set by `addDroplets` so Home can play a one-off droplet-arrival animation
+   * on the progress bar, then clear it. Like `hasHydrated`, not meaningfully
+   * persisted — reset on every rehydrate so a killed app never replays it.
+   */
+  pendingRewardDroplets: number | null;
   totalSessionsCompleted: number;
   currentStreak: number;
   setLanguage: (language: Language) => void;
   /** Onboarding only settles the language (via setLanguage); the plant is picked on Home. */
   completeOnboarding: () => void;
-  /** Also used to swap plants later on — droplets are global, so progress carries over. */
-  choosePlant: (plantId: string) => void;
+  /**
+   * Sets the chosen plant. `resetDroplets` clears the current water progress —
+   * the caller (the plant picker) is responsible for confirming that with the
+   * user first when there's progress to lose.
+   */
+  switchPlant: (plantId: string, resetDroplets: boolean) => void;
   addDroplets: (amount: number) => void;
+  /** Home calls this once it's finished playing the arrival animation. */
+  clearPendingReward: () => void;
   /** Debug-only: lets the Step 2 "onboarding shows once" test rerun without a reinstall. */
   resetOnboarding: () => void;
 }
@@ -40,13 +52,22 @@ export const useZenBalanceStore = create<ZenBalanceState>()(
       languagePreference: deviceLanguage(),
       chosenPlantId: null,
       totalDroplets: 0,
+      pendingRewardDroplets: null,
       totalSessionsCompleted: 0,
       currentStreak: 0,
       setLanguage: (language) => set(() => ({ languagePreference: language })),
       completeOnboarding: () => set(() => ({ hasCompletedOnboarding: true })),
-      choosePlant: (plantId) => set(() => ({ chosenPlantId: plantId })),
+      switchPlant: (plantId, resetDroplets) =>
+        set((state) => ({
+          chosenPlantId: plantId,
+          totalDroplets: resetDroplets ? 0 : state.totalDroplets,
+        })),
       addDroplets: (amount) =>
-        set((state) => ({ totalDroplets: state.totalDroplets + amount })),
+        set((state) => ({
+          totalDroplets: state.totalDroplets + amount,
+          pendingRewardDroplets: amount,
+        })),
+      clearPendingReward: () => set(() => ({ pendingRewardDroplets: null })),
       resetOnboarding: () =>
         set(() => ({ hasCompletedOnboarding: false, chosenPlantId: null })),
     }),
@@ -54,7 +75,8 @@ export const useZenBalanceStore = create<ZenBalanceState>()(
       name: 'zenbalance-storage',
       storage: createJSONStorage(() => AsyncStorage),
       // Runs once AsyncStorage has been read, including when it was empty.
-      onRehydrateStorage: () => () => useZenBalanceStore.setState({ hasHydrated: true }),
+      onRehydrateStorage: () => () =>
+        useZenBalanceStore.setState({ hasHydrated: true, pendingRewardDroplets: null }),
     }
   )
 );

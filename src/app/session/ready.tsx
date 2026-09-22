@@ -1,6 +1,12 @@
 import { useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import {
+  Stack,
+  useLocalSearchParams,
+  useNavigation,
+  useRootNavigationState,
+  useRouter,
+} from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SymbolView } from 'expo-symbols';
 import Animated, {
@@ -21,14 +27,43 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { useReduceMotion } from '@/hooks/use-reduce-motion';
 import { useTheme } from '@/hooks/use-theme';
 
+type NavState = { key?: string; routes: { name: string; state?: NavState }[] };
+
+// Depth-first, because useRootNavigationState() sits above expo-router's own
+// wrapper navigators, so the exact nesting depth isn't something to hardcode.
+function findStackKey(state: NavState | undefined, routeName: string): string | undefined {
+  for (const route of state?.routes ?? []) {
+    if (route.name === routeName) return route.state?.key;
+    const found = findStackKey(route.state, routeName);
+    if (found) return found;
+  }
+}
+
 /** The "place your phone down" instruction screen shown before a focus session starts. */
 export default function SessionReadyScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useLocalization();
   const sessionTheme = useTheme('session');
-  const { durationSeconds } = useLocalSearchParams<{ durationSeconds?: string }>();
+  const { durationSeconds, droplets } = useLocalSearchParams<{
+    durationSeconds?: string;
+    droplets?: string;
+  }>();
   const reduceMotion = useReduceMotion();
+  const navigation = useNavigation();
+  const rootState = useRootNavigationState();
+
+  const startSession = () => {
+    // The duration picker is still on (home)'s own stack underneath this
+    // full-screen modal; left there, it flashes on screen when the result
+    // screen closes. Pop it now, while it's hidden. Targeting that stack by
+    // key means the action goes to it directly instead of bubbling up to the
+    // root stack (which would close this modal instead), and it's a quiet no-op if
+    // that stack is already at Home.
+    const homeKey = findStackKey(rootState, '(home)');
+    if (homeKey) navigation.dispatch({ type: 'POP_TO_TOP', target: homeKey });
+    router.replace({ pathname: '/session', params: { durationSeconds, droplets } });
+  };
 
   const settle = useSharedValue(0);
 
@@ -117,9 +152,7 @@ export default function SessionReadyScreen() {
       <PrimaryButton
         mode="session"
         label={t.session.readyCta}
-        onPress={() =>
-          router.replace({ pathname: '/session', params: { durationSeconds } })
-        }
+        onPress={startSession}
       />
     </ThemedView>
   );
