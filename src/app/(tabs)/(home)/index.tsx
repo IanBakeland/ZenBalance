@@ -38,21 +38,36 @@ export default function HomeScreen() {
         <ThemedText type="smallBold" themeColor="droplet">
           💧 {totalDroplets} {t.home.droplets}
         </ThemedText>
-        {plant ? (
+        <View style={styles.headerActions}>
+          {plant ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push('/plants')}
+              style={({ pressed }) => [styles.changePlant, { opacity: pressed ? 0.5 : 1.0 }]}>
+              <ThemedText type="caption" themeColor="textSecondary">
+                {t.home.changePlant}
+              </ThemedText>
+              <SymbolView
+                name={{ ios: 'arrow.triangle.2.circlepath', android: 'autorenew', web: 'autorenew' }}
+                size={15}
+                tintColor={theme.textSecondary}
+              />
+            </Pressable>
+          ) : null}
+
+          {/* Replays the same tutorial the user saw during onboarding. */}
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push('/plants')}
-            style={({ pressed }) => [styles.changePlant, { opacity: pressed ? 0.5 : 1.0 }]}>
-            <ThemedText type="caption" themeColor="textSecondary">
-              {t.home.changePlant}
-            </ThemedText>
+            accessibilityLabel={t.onboarding.tutorialHeaderTitle}
+            onPress={() => router.push('/tutorial')}
+            style={({ pressed }) => [styles.iconButton, { opacity: pressed ? 0.5 : 1.0 }]}>
             <SymbolView
-              name={{ ios: 'arrow.triangle.2.circlepath', android: 'autorenew', web: 'autorenew' }}
-              size={15}
+              name={{ ios: 'info.circle', android: 'info', web: 'info' }}
+              size={22}
               tintColor={theme.textSecondary}
             />
           </Pressable>
-        ) : null}
+        </View>
       </View>
 
       <View style={styles.center}>
@@ -129,12 +144,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
   changePlant: {
     minHeight: MinTapTarget,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.one,
     paddingLeft: Spacing.three,
+  },
+  iconButton: {
+    minWidth: MinTapTarget,
+    minHeight: MinTapTarget,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   center: {
     flex: 1,

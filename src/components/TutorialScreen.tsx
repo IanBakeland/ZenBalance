@@ -1,18 +1,30 @@
 import { useEffect, useState } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { PrimaryButton } from '@/components/PrimaryButton';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { Spacing } from '@/constants/theme';
+import { PrimaryButton } from './PrimaryButton';
+import { ThemedText } from './ThemedText';
+import { ThemedView } from './ThemedView';
+
+import { BottomTabInset, Spacing } from '@/constants/theme';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
 import { hapticCommit } from '@/lib/haptics';
 
-export default function OnboardingTutorialScreen() {
+/**
+ * The one tutorial in the app. Two routes render it: `onboarding/tutorial` on a
+ * first launch, and `(home)/tutorial` when it's opened again from the ⓘ button.
+ * Only the footer differs — the first run commits onboarding, a replay just goes back.
+ */
+export default function TutorialScreen() {
   const { t } = useLocalization();
+  const router = useRouter();
   const completeOnboarding = useZenBalanceStore((s) => s.completeOnboarding);
+  const insets = useSafeAreaInsets();
+  // Read once at mount rather than subscribing: finishing onboarding flips this
+  // flag, and the footer must not change under the user's finger mid-press.
+  const [isReplay] = useState(() => useZenBalanceStore.getState().hasCompletedOnboarding);
 
   const steps = [
     { icon: '📵', title: t.onboarding.step1Title, body: t.onboarding.step1Body },
@@ -21,7 +33,13 @@ export default function OnboardingTutorialScreen() {
   ];
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView
+      style={[
+        styles.container,
+        // The replay lives inside the Home tab, so the floating native tab bar
+        // would otherwise sit on top of the button. Onboarding has no tab bar.
+        isReplay && { paddingBottom: insets.bottom + BottomTabInset + Spacing.three },
+      ]}>
       <Stack.Screen options={{ title: t.onboarding.tutorialHeaderTitle, headerShadowVisible: false }} />
 
       <View style={styles.intro}>
@@ -48,12 +66,21 @@ export default function OnboardingTutorialScreen() {
       </View>
 
       <View style={styles.footer}>
-        <ThemedText type="caption" themeColor="plantPrimary" style={styles.note}>
-          {t.onboarding.plantNote}
-        </ThemedText>
+        {isReplay ? null : (
+          <ThemedText type="caption" themeColor="plantPrimary" style={styles.note}>
+            {t.onboarding.plantNote}
+          </ThemedText>
+        )}
         <PrimaryButton
-          label={t.onboarding.cta}
+          label={isReplay ? t.onboarding.replayCta : t.onboarding.cta}
           onPress={() => {
+            if (isReplay) {
+              // canGoBack is false when the tutorial was deep-linked straight in,
+              // which would otherwise dead-end the user on this screen.
+              if (router.canGoBack()) router.back();
+              else router.replace('/');
+              return;
+            }
             hapticCommit();
             // Flipping the store is the whole navigation: the root Stack's guard
             // swaps the onboarding stack out for the tabs.
