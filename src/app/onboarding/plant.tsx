@@ -1,38 +1,31 @@
-import { StyleSheet, Pressable, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
 
 export default function OnboardingPlantScreen() {
   const router = useRouter();
-  const theme = useTheme();
 
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: 'Choose Plant', headerShadowVisible: false }} />
 
       <View style={styles.content}>
-        <ThemedText type="heading" style={styles.title}>
+        <ThemedText type="heading" style={styles.centered}>
           Pick your companion
         </ThemedText>
-        <ThemedText type="default" style={styles.description}>
+        <ThemedText type="default" style={[styles.centered, styles.description]}>
           Choose between small, medium, or large plants. (UI placeholder for Step 2)
         </ThemedText>
       </View>
 
-      <Pressable
-        style={({ pressed }) => [
-          styles.button,
-          { backgroundColor: theme.plantPrimary, opacity: pressed ? 0.5 : 1.0 },
-        ]}
-        onPress={() => router.push('/onboarding/language')}>
-        <ThemedText type="smallBold" style={styles.buttonText}>
-          Next: Choose Language
-        </ThemedText>
-      </Pressable>
+      <PrimaryButton
+        label="Next: Choose Language"
+        onPress={() => router.push('/onboarding/language')}
+      />
     </ThemedView>
   );
 }
@@ -41,7 +34,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: Spacing.four,
-    justifyContent: 'space-between',
+    gap: Spacing.four,
   },
   content: {
     flex: 1,
@@ -49,22 +42,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
   },
-  title: {
+  centered: {
     textAlign: 'center',
   },
   description: {
-    textAlign: 'center',
     maxWidth: 320,
-  },
-  button: {
-    paddingVertical: Spacing.three,
-    paddingHorizontal: Spacing.four,
-    borderRadius: 999,
-    alignItems: 'center',
-    marginBottom: Spacing.three,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
   },
 });

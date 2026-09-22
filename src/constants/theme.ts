@@ -9,6 +9,7 @@ export const Colors = {
     textSecondary: '#6B6558',
     plantPrimary: '#4C7A5E',
     plantPrimaryDark: '#365943',
+    onPlantPrimary: '#FFFFFF',
     plantAccent: '#8FB08A',
     droplet: '#6FA8C9',
     warmthAccent: '#D98E5B',
@@ -29,6 +30,7 @@ export const Colors = {
     textSecondary: '#A8A296',
     plantPrimary: '#7CAE8A',
     plantPrimaryDark: '#5B8C69',
+    onPlantPrimary: '#171A16',
     plantAccent: '#9EC4A9',
     droplet: '#8FC3E0',
     warmthAccent: '#E3A470',
@@ -49,6 +51,7 @@ export const Colors = {
     textSecondary: '#8A8A84',
     plantPrimary: '#7CD9A0',
     plantPrimaryDark: '#5BAE7D',
+    onPlantPrimary: '#05140C',
     plantAccent: '#7CD9A0',
     plantGlow: '#7CD9A0',
     droplet: '#7EC8E3',
@@ -100,6 +103,11 @@ export const Spacing = {
   six: 48,
   seven: 64,
 } as const;
+
+/** Radius for the pill-shaped primary actions (STYLE_GUIDE.md section 4). */
+export const PillRadius = 999;
+/** Minimum tappable size, STYLE_GUIDE.md section 8. */
+export const MinTapTarget = 44;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;

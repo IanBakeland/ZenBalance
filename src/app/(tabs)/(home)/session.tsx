@@ -1,21 +1,23 @@
-import { StyleSheet, Pressable, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Spacing } from '@/constants/theme';
+import { MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function SessionScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  // The session screen is the one screen on the separate true-black palette
+  // (STYLE_GUIDE.md section 2), regardless of the app's light/dark mode.
   const sessionTheme = useTheme('session');
 
   return (
     <ThemedView
       mode="session"
-      type="background"
       style={[
         styles.container,
         {
@@ -23,47 +25,39 @@ export default function SessionScreen() {
           paddingBottom: insets.bottom + Spacing.four,
         },
       ]}>
-      <Stack.Screen
-        options={{
-          title: 'Session',
-          headerShown: false,
-          presentation: 'fullScreenModal',
-        }}
-      />
+      <Stack.Screen options={{ title: 'Session', headerShown: false }} />
+      <StatusBar style="light" />
 
-      {/* AMOLED Header */}
-      <View style={styles.header}>
+      <View>
         <ThemedText mode="session" type="caption" themeColor="textSecondary">
           STAY STILL • FOCUSING
         </ThemedText>
       </View>
 
-      {/* Luminous Plant & Timer Centerpiece */}
+      {/* Luminous plant & timer centerpiece — keep the lit area small. */}
       <View style={styles.center}>
-        <ThemedText mode="session" type="timer" themeColor="text">
+        <ThemedText mode="session" type="timer">
           25:00
         </ThemedText>
         <ThemedText mode="session" style={styles.glowPlant}>
           🌿
         </ThemedText>
         <ThemedText mode="session" type="caption" themeColor="plantGlow">
-          Sensor check active (Placeholder Step 4/6)
+          Sensor check active (placeholder — Steps 4/6)
         </ThemedText>
       </View>
 
-      {/* Manual Stop Button */}
-      <View style={styles.footer}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.stopButton,
-            { borderColor: sessionTheme.textSecondary, opacity: pressed ? 0.5 : 1.0 },
-          ]}
-          onPress={() => router.back()}>
-          <ThemedText mode="session" type="small" themeColor="textSecondary">
-            Stop Session
-          </ThemedText>
-        </Pressable>
-      </View>
+      <Pressable
+        accessibilityRole="button"
+        style={({ pressed }) => [
+          styles.stopButton,
+          { borderColor: sessionTheme.textSecondary, opacity: pressed ? 0.5 : 1.0 },
+        ]}
+        onPress={() => router.back()}>
+        <ThemedText mode="session" type="small" themeColor="textSecondary">
+          Stop Session
+        </ThemedText>
+      </Pressable>
     </ThemedView>
   );
 }
@@ -75,9 +69,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  header: {
-    paddingTop: Spacing.two,
-  },
   center: {
     alignItems: 'center',
     gap: Spacing.four,
@@ -85,14 +76,11 @@ const styles = StyleSheet.create({
   glowPlant: {
     fontSize: 72,
   },
-  footer: {
-    width: '100%',
-    alignItems: 'center',
-  },
   stopButton: {
-    paddingVertical: Spacing.two,
+    minHeight: MinTapTarget,
+    justifyContent: 'center',
     paddingHorizontal: Spacing.five,
-    borderRadius: 999,
+    borderRadius: PillRadius,
     borderWidth: 1,
   },
 });

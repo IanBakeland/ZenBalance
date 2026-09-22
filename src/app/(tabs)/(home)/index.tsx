@@ -2,17 +2,18 @@ import { StyleSheet, Pressable, View } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { BottomTabInset, MinTapTarget, Spacing } from '@/constants/theme';
 import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
 
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const theme = useTheme();
-  const { totalDroplets, chosenPlantId, resetOnboarding } = useZenBalanceStore();
+  const totalDroplets = useZenBalanceStore((s) => s.totalDroplets);
+  const chosenPlantId = useZenBalanceStore((s) => s.chosenPlantId);
+  const resetOnboarding = useZenBalanceStore((s) => s.resetOnboarding);
 
   return (
     <ThemedView
@@ -48,26 +49,15 @@ export default function HomeScreen() {
 
       {/* Controls & Actions */}
       <View style={styles.actions}>
-        <ThemedText type="caption" themeColor="textSecondary" style={styles.durationHint}>
+        <ThemedText type="caption" themeColor="textSecondary">
           Duration: 25 minutes
         </ThemedText>
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: theme.plantPrimary, opacity: pressed ? 0.5 : 1.0 },
-          ]}
-          onPress={() => router.push('/(home)/session')}>
-          <ThemedText type="smallBold" style={styles.buttonText}>
-            Start Session
-          </ThemedText>
-        </Pressable>
+        <PrimaryButton label="Start Session" onPress={() => router.push('/session')} />
 
         <Pressable
-          style={({ pressed }) => [
-            styles.resetButton,
-            { opacity: pressed ? 0.5 : 1.0 },
-          ]}
+          accessibilityRole="button"
+          style={({ pressed }) => [styles.resetButton, { opacity: pressed ? 0.5 : 1.0 }]}
           onPress={resetOnboarding}>
           <ThemedText type="caption" themeColor="textSecondary">
             Reset Onboarding (Debug)
@@ -82,7 +72,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: Spacing.four,
-    justifyContent: 'space-between',
   },
   header: {
     flexDirection: 'row',
@@ -102,7 +91,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.two,
     shadowColor: '#000',
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.08,
     shadowRadius: 16,
   },
   plantEmoji: {
@@ -112,20 +101,9 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
     alignItems: 'center',
   },
-  durationHint: {
-    textAlign: 'center',
-  },
-  button: {
-    width: '100%',
-    paddingVertical: Spacing.three,
-    borderRadius: 999,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-  },
   resetButton: {
-    padding: Spacing.one,
+    minHeight: MinTapTarget,
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.three,
   },
 });

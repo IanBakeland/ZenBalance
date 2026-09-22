@@ -1,39 +1,34 @@
-import { StyleSheet, Pressable, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
 
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
 import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
 
 export default function OnboardingLanguageScreen() {
   const completeOnboarding = useZenBalanceStore((s) => s.completeOnboarding);
-  const theme = useTheme();
 
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: 'Language', headerShadowVisible: false }} />
 
       <View style={styles.content}>
-        <ThemedText type="heading" style={styles.title}>
+        <ThemedText type="heading" style={styles.centered}>
           Select your language
         </ThemedText>
-        <ThemedText type="default" style={styles.description}>
+        <ThemedText type="default" style={[styles.centered, styles.description]}>
           Nederlands of Engels. (UI placeholder for Step 2)
         </ThemedText>
       </View>
 
-      <Pressable
-        style={({ pressed }) => [
-          styles.button,
-          { backgroundColor: theme.plantPrimary, opacity: pressed ? 0.5 : 1.0 },
-        ]}
-        onPress={() => completeOnboarding('seedling_starter', 'nl')}>
-        <ThemedText type="smallBold" style={styles.buttonText}>
-          Get Started
-        </ThemedText>
-      </Pressable>
+      {/* The store flip is the whole navigation: the root Stack's guard swaps
+          the onboarding stack out for the tabs. No manual router call needed. */}
+      <PrimaryButton
+        label="Get Started"
+        onPress={() => completeOnboarding('seedling_starter', 'nl')}
+      />
     </ThemedView>
   );
 }
@@ -42,7 +37,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: Spacing.four,
-    justifyContent: 'space-between',
+    gap: Spacing.four,
   },
   content: {
     flex: 1,
@@ -50,22 +45,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
   },
-  title: {
+  centered: {
     textAlign: 'center',
   },
   description: {
-    textAlign: 'center',
     maxWidth: 320,
-  },
-  button: {
-    paddingVertical: Spacing.three,
-    paddingHorizontal: Spacing.four,
-    borderRadius: 999,
-    alignItems: 'center',
-    marginBottom: Spacing.three,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
   },
 });

@@ -6,13 +6,12 @@ import {
   TabTriggerSlotProps,
   TabListProps,
 } from 'expo-router/ui';
-import { SymbolView } from 'expo-symbols';
-import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
+import { Pressable, View, StyleSheet } from 'react-native';
 
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
-import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { MaxContentWidth, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
 
 export default function AppTabs() {
   return (
@@ -49,9 +48,6 @@ export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps
 }
 
 export function CustomTabList(props: TabListProps) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
-
   return (
     <View {...props} style={styles.tabListContainer}>
       <ThemedView type="surface" style={styles.innerContainer}>
@@ -78,7 +74,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     paddingVertical: Spacing.two,
     paddingHorizontal: Spacing.five,
-    borderRadius: Spacing.five,
+    borderRadius: PillRadius,
     flexDirection: 'row',
     alignItems: 'center',
     flexGrow: 1,
@@ -95,8 +91,9 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   tabButtonView: {
-    paddingVertical: Spacing.one,
+    minHeight: MinTapTarget,
+    justifyContent: 'center',
     paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
+    borderRadius: PillRadius,
   },
 });

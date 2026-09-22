@@ -1,8 +1,13 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface ZenBalanceState {
+  /**
+   * False until AsyncStorage has been read. Not persisted meaningfully — the root
+   * layout holds the splash screen on it, so a returning user never flashes onboarding.
+   */
+  hasHydrated: boolean;
   hasCompletedOnboarding: boolean;
   languagePreference: 'nl' | 'en';
   chosenPlantId: string | null;
@@ -11,12 +16,14 @@ export interface ZenBalanceState {
   currentStreak: number;
   completeOnboarding: (plantId: string, language: 'nl' | 'en') => void;
   addDroplets: (amount: number) => void;
+  /** Debug-only: lets the Step 2 "onboarding shows once" test rerun without a reinstall. */
   resetOnboarding: () => void;
 }
 
 export const useZenBalanceStore = create<ZenBalanceState>()(
   persist(
     (set) => ({
+      hasHydrated: false,
       hasCompletedOnboarding: false,
       languagePreference: 'nl',
       chosenPlantId: null,
@@ -40,6 +47,8 @@ export const useZenBalanceStore = create<ZenBalanceState>()(
     {
       name: 'zenbalance-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      // Runs once AsyncStorage has been read, including when it was empty.
+      onRehydrateStorage: () => () => useZenBalanceStore.setState({ hasHydrated: true }),
     }
   )
 );
