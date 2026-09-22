@@ -1,56 +1,120 @@
-# Welcome to your Expo app 👋
+<div align="center">
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# 🌱 ZenBalance
 
-## Get started
+**A pomodoro focus app where staying still grows a plant.**
 
-1. Install dependencies
+Put your phone down. Watch it grow. Pick it back up, and it doesn't.
 
-   ```bash
-   npm install
-   ```
+[![Expo](https://img.shields.io/badge/Expo-SDK%2057-000020?logo=expo&logoColor=white)](https://expo.dev)
+[![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?logo=react&logoColor=white)](https://reactnative.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey)](#)
+[![Status](https://img.shields.io/badge/status-in%20development-yellow)](#roadmap)
 
-2. Start the app
+</div>
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## What is this?
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+ZenBalance flips the usual pomodoro logic on its head: instead of an app that demands your attention, **success means not touching your phone at all.**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Start a focus session, place your phone face-up and still on the table, and a small plant on screen starts to grow — one drop of water at a time, for every moment you leave it alone. Pick the phone up, and the plant stops growing. Finish the full session without moving it, and your plant blooms a little further, from a tiny seedling to a full, flowering plant.
 
-## Get a fresh project
+It's a small, honest trick: the only way to "win" is to genuinely put your phone down and focus on something else for a while.
 
-When you're ready, run:
+<div align="center">
+<!-- 📸 Replace with real screenshots/GIFs once available: home screen, an active session, and the plant mid-growth -->
+<i>Screenshots coming soon</i>
+</div>
+
+## Why native, and why a phone
+
+This only works because it's a real, native mobile app. Detecting that a phone is genuinely lying still — continuously, reliably, in the background of a running app — needs direct access to the device's motion sensors, something a website simply cannot do. The whole concept only exists *because* it's running on hardware in your hand, not in a browser tab.
+
+## ✨ Features
+
+- **🌿 Grow a plant by doing nothing** — the core loop: place your phone down, stay still, and watch it grow.
+- **💧 Choose your plant** — pick a small plant for a quick win, or a bigger one that takes several longer sessions to fully bloom.
+- **🌍 Onboarding in your language** — a short first-launch tutorial, available in Dutch and English, with your device's language pre-selected.
+- **🌑 A screen designed to stay on** — the session screen uses a true-black, AMOLED-friendly design, since the display has to stay awake for the sensors to keep working throughout the session.
+- **🤝 Focus together** — start a session with friends around the same table: everyone shares one plant, and moving your phone gives the whole group away.
+- **📤 Share your plant** — capture and share how far your plant has grown.
+- **🔕 A quiet screen** — the app suppresses its own notifications for the duration of a session, so nothing interrupts you while you're trying not to be interrupted.
+
+## 🧠 How it works
+
+1. **Place your phone down.** During a session, ZenBalance reads the device's accelerometer at a steady interval and checks whether the phone is lying still.
+2. **Stay still, earn droplets.** As long as the phone doesn't move, droplets accumulate over the course of the session — longer sessions earn more.
+3. **The plant grows.** Enough droplets push the plant into its next growth stage, from seedling to full bloom.
+4. **Pick it up, and it stops.** Movement is detected almost immediately and ends the session's progress — no droplet, no growth, that time around.
+5. **Do it together.** In a group session, one shared plant depends on *everyone* staying still — if anyone moves, the whole group finds out.
+
+## 🛠️ Tech stack
+
+| | |
+|---|---|
+| **Framework** | [Expo](https://expo.dev) (React Native), [Expo Router](https://docs.expo.dev/router/introduction/) |
+| **Language** | TypeScript |
+| **State** | [Zustand](https://github.com/pmndrs/zustand), persisted with `AsyncStorage` |
+| **Sensors & device** | `expo-sensors` (Accelerometer), `expo-haptics`, `expo-keep-awake`, `expo-localization` |
+| **Sharing & notifications** | `expo-sharing`, `expo-notifications`, `react-native-view-shot` |
+| **Lists & UI** | `@shopify/flash-list`, `expo-image`, `expo-symbols` |
+| **Group sessions** | Firebase (Firestore), `@react-native-community/netinfo` |
+| **Visual polish** *(optional)* | `@shopify/react-native-skia`, `react-native-reanimated` |
+
+## 🚀 Getting started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) and npm
+- The [Expo Go](https://expo.dev/go) app on a physical iOS or Android device — **a real device is required**, the accelerometer doesn't work in a simulator
+- Xcode (for iOS builds) and/or Android Studio, if you want to build natively rather than run through Expo Go
+
+### Installation
 
 ```bash
-npm run reset-project
+git clone https://github.com/<your-username>/zenbalance.git
+cd zenbalance
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Running the app
 
-### Other setup steps
+```bash
+npm start
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Scan the QR code with Expo Go on your phone, or press `i` / `a` in the terminal to open an iOS/Android simulator (note: sensor-dependent features won't work in a simulator — use a real device to test the full experience).
 
-## Learn more
+## 📁 Project structure
 
-To learn more about developing your project with Expo, look at the following resources:
+```
+zenbalance/
+  src/
+    app/          # screens — Expo Router file-based routing
+    components/    # ThemedText, ThemedView, PlantView, tab bar, ...
+    constants/      # theme tokens, layout constants
+    hooks/          # sensor hook, timer hook, the Zustand store, ...
+    data/            # static data, if any
+  assets/            # plant illustrations, icons
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+For the full technical build plan and architectural conventions this project follows, see [`PROJECT_PLAN.md`](./PROJECT_PLAN.md), [`AGENT_INSTRUCTIONS.md`](./AGENT_INSTRUCTIONS.md), and [`STYLE_GUIDE.md`](./STYLE_GUIDE.md) in this repo.
 
-## Join the community
+## 🗺️ Roadmap
 
-Join our community of developers creating universal apps.
+- [x] Concept & design
+- [ ] **Phase 1 — Solo experience:** onboarding, plant picker, the core stillness/timer/growth loop, sharing
+- [ ] **Phase 2 — Focus together:** group sessions with friends, shared plant, synchronized timers
+- [ ] **Phase 3 — Polish:** richer growth animations, additional plants, reminders
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🎓 About
+
+ZenBalance is a solo student project built for a React Native / Expo course, exploring what a focus app can look like when it's designed *around* native mobile capabilities (motion sensors, haptics, always-on displays) instead of just being a to-do list with a timer bolted on.
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE) — see the [`LICENSE`](file:///Users/ian/Local%20docs/ExpertCode/ZenBalance/LICENSE) file for details.
+
