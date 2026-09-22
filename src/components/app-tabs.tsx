@@ -23,17 +23,17 @@ export default function AppTabs() {
       }}>
       <NativeTabs.Trigger name="(home)">
         <NativeTabs.Trigger.Label>{t.tabs.home}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="leaf" md="eco" />
+        <NativeTabs.Trigger.Icon sf={{ default: 'leaf', selected: 'leaf.fill' }} md="eco" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="together">
         <NativeTabs.Trigger.Label>{t.tabs.together}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="person.2" md="group" />
+        <NativeTabs.Trigger.Icon sf={{ default: 'person.2', selected: 'person.2.fill' }} md="group" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="collection">
         <NativeTabs.Trigger.Label>{t.tabs.collection}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="square.grid.2x2" md="grid_view" />
+        <NativeTabs.Trigger.Icon sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }} md="grid_view" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );
