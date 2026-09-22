@@ -1,7 +1,8 @@
 {
   "tabs": {
     "home": "Home",
-    "together": "Samen"
+    "together": "Samen",
+    "collection": "Verzameling"
   },
   "onboarding": {
     "welcome": "Welkom bij",
@@ -68,5 +69,11 @@
     "sessionLabel": "Sessie",
     "lobbyHint": "Lobby-placeholder voor een groepssessie (fase 2).",
     "leaveRoom": "Kamer verlaten"
+  },
+  "collection": {
+    "title": "Plantenverzameling",
+    "subtitle": "Alle planten die je hebt gekweekt, op één plek.",
+    "emptyTitle": "Nog geen planten",
+    "emptyHint": "Rond sessies af om hier planten te verzamelen."
   }
 }

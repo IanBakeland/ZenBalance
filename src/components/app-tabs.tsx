@@ -30,6 +30,11 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Label>{t.tabs.together}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="person.2" md="group" />
       </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="collection">
+        <NativeTabs.Trigger.Label>{t.tabs.collection}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="square.grid.2x2" md="grid_view" />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

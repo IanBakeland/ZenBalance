@@ -28,6 +28,9 @@ export default function AppTabs() {
           <TabTrigger name="together" href="/together" asChild>
             <TabButton>{t.tabs.together}</TabButton>
           </TabTrigger>
+          <TabTrigger name="collection" href="/collection" asChild>
+            <TabButton>{t.tabs.collection}</TabButton>
+          </TabTrigger>
         </CustomTabList>
       </TabList>
     </Tabs>
