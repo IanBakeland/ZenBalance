@@ -101,7 +101,7 @@ zenbalance/
   assets/            # plant illustrations, icons
 ```
 
-For the full technical build plan and architectural conventions this project follows, see [`PROJECT_PLAN.md`](./PROJECT_PLAN.md), [`AGENT_INSTRUCTIONS.md`](./AGENT_INSTRUCTIONS.md), and [`STYLE_GUIDE.md`](./STYLE_GUIDE.md) in this repo.
+For the full technical build plan and architectural conventions this project follows, see [`docs/PROJECT_PLAN.md`](./docs/PROJECT_PLAN.md) and [`docs/STYLE_GUIDE.md`](./docs/STYLE_GUIDE.md) in this repo.
 
 ## 🗺️ Roadmap
 
