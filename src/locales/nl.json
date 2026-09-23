@@ -25,30 +25,39 @@
     "replayCta": "Duidelijk"
   },
   "home": {
-    "noPlantTitle": "Laten we je plant vinden",
-    "noPlantBody": "Kies er een om te beginnen. Niets staat vast — je kunt altijd van gedachten veranderen.",
-    "choosePlant": "Kies je plant",
-    "changePlant": "Plant wisselen",
+    "noPlantTitle": "Laten we je bloem vinden",
+    "noPlantBody": "Kies er een om te laten groeien. Laat hem volledig bloeien en hij komt in je verzameling.",
+    "choosePlant": "Kies je bloem",
+    "changePlant": "Bloem wisselen",
     "startSession": "Start sessie",
     "droplets": "druppels",
     "toBloom": "tot bloei",
     "resetOnboarding": "Onboarding resetten (debug)"
   },
   "plants": {
-    "headerTitle": "Jouw plant",
-    "intro": "Een kleinere plant bloeit na een paar sessies. Een grotere vraagt er een seizoen vol.",
+    "headerTitle": "Jouw bloem",
+    "intro": "Kleine bloemen bloeien na een sessie of twee. De grote vragen een seizoen vol focus. Elke bloei komt in je verzameling.",
     "dropletsToBloom": "druppels tot bloei",
     "growingNow": "Groeit nu",
     "confirmSwitchTitle": "Plant wisselen?",
     "confirmSwitchBody": "Je huidige waterhoeveelheid gaat verloren als je van plant wisselt. Je begint opnieuw met de nieuwe plant.",
     "confirmSwitchCancel": "Annuleren",
     "confirmSwitchContinue": "Doorgaan",
-    "basilName": "Basilicum",
-    "basilBlurb": "Snel en gul. Klaar om te bloeien na een handvol sessies.",
-    "fernName": "Varen",
-    "fernBlurb": "Geduldig. Ontvouwt zich in een week of twee van rustige focus.",
-    "monsteraName": "Monstera",
-    "monsteraBlurb": "De lange weg. Een heel seizoen stilte, blad voor blad."
+    "daisyName": "Madeliefje",
+    "daisyBlurb": "De snelste bloei die er is. Een zachte eerste stap.",
+    "hibiscusName": "Hibiscus",
+    "hibiscusBlurb": "Krachtig en warm. Opent na een paar rustige sessies.",
+    "camelliaName": "Camelia",
+    "camelliaBlurb": "Zachte, gelaagde blaadjes die wat geduld belonen.",
+    "marigoldName": "Goudsbloem",
+    "marigoldBlurb": "Een straal zonlicht, gegroeid in een rustige week.",
+    "gerberaName": "Gerbera",
+    "gerberaBlurb": "Vrolijk en fel, voor een langere reeks focus.",
+    "peonyName": "Pioenroos",
+    "peonyBlurb": "Weelderig en royaal. Een echte test van stilte.",
+    "dahliaName": "Dahlia",
+    "dahliaBlurb": "De zeldzaamste bloei. Een heel seizoen stille focus.",
+    "collected": "Verzameld"
   },
   "duration": {
     "headerTitle": "Kies je timer",
@@ -62,7 +71,13 @@
     "medium": "Middel",
     "large": "Groot"
   },
-  "stages": ["Zaailing", "Spruit", "Jonge plant", "Volgroeid", "In bloei"],
+  "stages": [
+    "Zaailing",
+    "Spruit",
+    "Jonge plant",
+    "Volgroeid",
+    "In bloei"
+  ],
   "session": {
     "stop": "Sessie stoppen",
     "successTitle": "Focus voltooid",
@@ -90,9 +105,21 @@
     "leaveRoom": "Kamer verlaten"
   },
   "collection": {
-    "title": "Plantenverzameling",
-    "subtitle": "Alle planten die je hebt gekweekt, op één plek.",
-    "emptyTitle": "Nog geen planten",
-    "emptyHint": "Rond sessies af om hier planten te verzamelen."
+    "title": "Verzameling",
+    "subtitle": "Elke bloem die je liet groeien, op één plek.",
+    "emptyTitle": "Je verzameling wacht op je",
+    "emptyHint": "Laat een bloem op Home volledig bloeien en hij wordt hier voor altijd bewaard.",
+    "progress": "verzameld",
+    "emptyCta": "Begin met groeien",
+    "locked": "Nog niet verzameld",
+    "newBadge": "Nieuw",
+    "collectedOn": "Verzameld op",
+    "grownWith": "Gegroeid met",
+    "size": "Formaat",
+    "revealTitle": "Bloem verzameld!",
+    "revealBody": "Deze bloem is toegevoegd aan je verzameling.",
+    "revealBodyRepeat": "Opnieuw gegroeid — hij staat al in je verzameling.",
+    "revealNext": "Kies je volgende bloem",
+    "revealView": "Bekijk verzameling"
   }
 }

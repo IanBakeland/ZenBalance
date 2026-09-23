@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -22,6 +23,7 @@ export default function PlantPickerScreen() {
   const chosenPlantId = useZenBalanceStore((s) => s.chosenPlantId);
   const totalDroplets = useZenBalanceStore((s) => s.totalDroplets);
   const switchPlant = useZenBalanceStore((s) => s.switchPlant);
+  const collectedAt = useZenBalanceStore((s) => s.collectedAt);
 
   // Switching plants while the current one has progress resets that progress —
   // confirm first rather than losing it silently.
@@ -72,6 +74,7 @@ export default function PlantPickerScreen() {
           <PlantOption
             plant={item}
             isChosen={item.id === chosenPlantId}
+            isCollected={item.id in collectedAt}
             onPress={() => selectPlant(item)}
           />
         )}
@@ -119,10 +122,12 @@ export default function PlantPickerScreen() {
 function PlantOption({
   plant,
   isChosen,
+  isCollected,
   onPress,
 }: {
   plant: Plant;
   isChosen: boolean;
+  isCollected: boolean;
   onPress: () => void;
 }) {
   const theme = useTheme();
@@ -137,12 +142,10 @@ function PlantOption({
       <ThemedView
         type={isChosen ? 'surface' : 'surfaceMuted'}
         style={[styles.card, { borderColor: isChosen ? theme.plantPrimary : 'transparent' }]}>
-        <View style={styles.preview}>
-          {/* The final stage, so the card shows what you're growing towards. */}
-          <ThemedText style={styles.previewIcon}>
-            {plant.stages[plant.stages.length - 1]}
-          </ThemedText>
-        </View>
+        {/* Full bloom, so the card shows what you're growing towards. */}
+        <ThemedView type={isChosen ? 'surfaceMuted' : 'surface'} style={styles.preview}>
+          <Image source={plant.image} style={styles.previewImage} contentFit="contain" />
+        </ThemedView>
 
         <View style={styles.cardText}>
           <View style={styles.titleRow}>
@@ -158,9 +161,23 @@ function PlantOption({
           <ThemedText type="small" themeColor="textSecondary">
             {t.plants[`${plant.id}Blurb`]}
           </ThemedText>
-          <ThemedText type="caption" themeColor="droplet">
-            {t.sizes[plant.size]} · {plant.dropletsToBloom} {t.plants.dropletsToBloom}
-          </ThemedText>
+          <View style={styles.metaRow}>
+            <ThemedText type="caption" themeColor="droplet">
+              {t.sizes[plant.size]} · {plant.dropletsToBloom} {t.plants.dropletsToBloom}
+            </ThemedText>
+            {isCollected ? (
+              <View style={styles.collectedBadge}>
+                <SymbolView
+                  name={{ ios: 'checkmark.seal.fill', android: 'verified', web: 'verified' }}
+                  size={13}
+                  tintColor={theme.warmthAccent}
+                />
+                <ThemedText type="caption" themeColor="textSecondary" style={styles.collectedText}>
+                  {t.plants.collected}
+                </ThemedText>
+              </View>
+            ) : null}
+          </View>
         </View>
       </ThemedView>
     </Pressable>
@@ -189,13 +206,29 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   preview: {
-    width: 64,
-    height: 64,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  previewIcon: {
-    fontSize: 44,
+  previewImage: {
+    width: 58,
+    height: 58,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: Spacing.two,
+  },
+  collectedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.half,
+  },
+  collectedText: {
+    fontWeight: '600',
   },
   cardText: {
     flex: 1,

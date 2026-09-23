@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Stack, useIsFocused, useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
@@ -16,12 +16,14 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { FlowerRevealModal } from '@/components/FlowerRevealModal';
+import { NoFlowerState } from '@/components/NoFlowerState';
 import { PlantView } from '@/components/PlantView';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { findPlant } from '@/data/plants';
+import { findPlant, growthStage } from '@/data/plants';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useReduceMotion } from '@/hooks/use-reduce-motion';
 import { useTheme } from '@/hooks/use-theme';
@@ -38,12 +40,22 @@ export default function HomeScreen() {
   const clearPendingReward = useZenBalanceStore((s) => s.clearPendingReward);
   const chosenPlantId = useZenBalanceStore((s) => s.chosenPlantId);
   const resetOnboarding = useZenBalanceStore((s) => s.resetOnboarding);
-  const plant = findPlant(chosenPlantId);
+  const pendingCollection = useZenBalanceStore((s) => s.pendingCollection);
+  const acknowledgeCollection = useZenBalanceStore((s) => s.acknowledgeCollection);
+  // A just-collected flower has already left the pot in the store; keep it on
+  // screen in full bloom until the collection popup is dismissed.
+  const plant = findPlant(pendingCollection?.plantId ?? chosenPlantId);
+  const droplets = pendingCollection && plant ? plant.dropletsToBloom : totalDroplets;
+  // Hold the stage back until the droplet rain has landed, so the flower grows
+  // as the water arrives rather than before it.
+  const stage = plant
+    ? growthStage(plant, pendingRewardDroplets ? Math.max(0, droplets - pendingRewardDroplets) : droplets)
+    : 0;
 
   // Smooth fill transition (droplets landing shouldn't just snap the bar),
   // plus a slow, quiet highlight sweep so it reads as water, not a generic
   // loading bar. Both stay off entirely under reduce-motion.
-  const progressRatio = plant ? Math.min(1, totalDroplets / plant.dropletsToBloom) : 0;
+  const progressRatio = plant ? Math.min(1, droplets / plant.dropletsToBloom) : 0;
   const fill = useSharedValue(progressRatio);
   const fillStyle = useAnimatedStyle(() => ({ width: `${fill.value * 100}%` }));
 
@@ -114,6 +126,22 @@ export default function HomeScreen() {
     clearPendingReward,
   ]);
 
+  // The popup waits for the droplet rain and the bloom itself to finish playing.
+  const revealPlantId = pendingCollection && !pendingRewardDroplets && isFocused ? pendingCollection.plantId : null;
+  const [revealDelayDoneFor, setRevealDelayDoneFor] = useState<string | null>(null);
+  useEffect(() => {
+    if (!revealPlantId) return;
+    const timer = setTimeout(() => setRevealDelayDoneFor(revealPlantId), reduceMotion ? 0 : 1100);
+    return () => clearTimeout(timer);
+  }, [revealPlantId, reduceMotion]);
+  const showReveal = revealPlantId !== null && revealDelayDoneFor === revealPlantId;
+
+  function viewCollection() {
+    const plantId = pendingCollection?.plantId;
+    acknowledgeCollection();
+    router.navigate({ pathname: '/collection', params: plantId ? { highlight: plantId } : {} });
+  }
+
   const shimmer = useSharedValue(0);
   useEffect(() => {
     if (reduceMotion) return;
@@ -142,7 +170,7 @@ export default function HomeScreen() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <View>
-            {plant ? (
+            {plant && !pendingCollection ? (
               <Pressable
                 accessibilityRole="button"
                 onPress={() => router.push('/plants')}
@@ -177,20 +205,9 @@ export default function HomeScreen() {
 
         <View style={styles.center}>
           {plant ? (
-            // Step 5 replaces the hardcoded stage with one derived from totalDroplets.
-            <PlantView plant={plant} stage={0} />
+            <PlantView plant={plant} stage={stage} />
           ) : (
-            <View style={styles.empty}>
-              <ThemedView type="surfaceMuted" style={styles.emptyPot}>
-                <ThemedText style={styles.emptyIcon}>🫙</ThemedText>
-              </ThemedView>
-              <ThemedText type="subtitle" style={styles.centered}>
-                {t.home.noPlantTitle}
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary" style={styles.centered}>
-                {t.home.noPlantBody}
-              </ThemedText>
-            </View>
+            <NoFlowerState />
           )}
         </View>
 
@@ -199,7 +216,7 @@ export default function HomeScreen() {
             <>
               <View style={styles.progressRow}>
                 <ThemedText type="caption" themeColor="textSecondary">
-                  {totalDroplets} / {plant.dropletsToBloom} {t.home.toBloom}
+                  {droplets} / {plant.dropletsToBloom} {t.home.toBloom}
                 </ThemedText>
               </View>
               {visibleDropletCount > 0 ? (
@@ -226,10 +243,13 @@ export default function HomeScreen() {
                 </Animated.View>
               </ThemedView>
 
-              <PrimaryButton
-                label={t.home.startSession}
-                onPress={() => router.push('/duration')}
-              />
+              {/* Nothing is in the pot while a collected flower is on show. */}
+              {!pendingCollection ? (
+                <PrimaryButton
+                  label={t.home.startSession}
+                  onPress={() => router.push('/duration')}
+                />
+              ) : null}
             </>
           ) : (
             <PrimaryButton label={t.home.choosePlant} onPress={() => router.push('/plants')} />
@@ -245,6 +265,17 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       </ScrollView>
+
+      <FlowerRevealModal
+        plant={showReveal ? plant : undefined}
+        isNew={pendingCollection?.isNew ?? true}
+        onChooseNext={() => {
+          acknowledgeCollection();
+          router.push('/plants');
+        }}
+        onViewCollection={viewCollection}
+        onClose={acknowledgeCollection}
+      />
     </ThemedView>
   );
 }
@@ -322,26 +353,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: Spacing.four,
-  },
-  empty: {
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  emptyPot: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.three,
-  },
-  emptyIcon: {
-    fontSize: 72,
-    opacity: 0.55,
-  },
-  centered: {
-    textAlign: 'center',
-    maxWidth: 300,
   },
   actions: {
     gap: Spacing.two,
