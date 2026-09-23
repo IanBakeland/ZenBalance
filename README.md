@@ -134,13 +134,6 @@ assets/
 
 For the full build plan and design system, see [`docs/PROJECT_PLAN.md`](./docs/PROJECT_PLAN.md) and [`docs/STYLE_GUIDE.md`](./docs/STYLE_GUIDE.md).
 
-## 🗺️ Roadmap
-
-- [x] Concept & design
-- [x] **Phase 1, solo:** onboarding, flower picker, stillness detection, timer, droplets, collection
-- [x] **Phase 2, Together:** host/join with invite codes, a shared bouquet, synced timers, group-only flowers
-- [ ] **Phase 3, polish:** share your collection, session reminders, more flowers
-
 ## 🎓 About
 
 ZenBalance is a solo student project for a React Native / Expo course. It tries out a focus app built around what a phone can do natively (motion sensors, haptics, a screen that stays on), instead of a to-do list with a timer added on.
