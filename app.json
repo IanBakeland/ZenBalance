@@ -11,6 +11,7 @@
       "icon": "./assets/images/icon.png"
     },
     "android": {
+      "package": "com.zenbalance.app",
       "adaptiveIcon": {
         "backgroundColor": "#F7F4EC",
         "foregroundImage": "./assets/images/icon.png"
