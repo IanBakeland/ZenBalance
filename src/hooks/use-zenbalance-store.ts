@@ -3,7 +3,7 @@ import { getLocales } from 'expo-localization';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { findPlant } from '@/data/plants';
+import { findSoloPlant } from '@/data/plants';
 
 export type Language = 'nl' | 'en';
 
@@ -33,6 +33,10 @@ export interface ZenBalanceState {
    * popup is dismissed. Persisted, so a killed app still shows the popup.
    */
   pendingCollection: { plantId: string; isNew: boolean } | null;
+  /** This device's participant id in Together sessions. Random, never shown. */
+  deviceId: string;
+  /** What friends see in a Together session. */
+  displayName: string;
   setLanguage: (language: Language) => void;
   /** Onboarding only settles the language (via setLanguage); the plant is picked on Home. */
   completeOnboarding: () => void;
@@ -44,6 +48,12 @@ export interface ZenBalanceState {
   switchPlant: (plantId: string, resetDroplets: boolean) => void;
   /** Also collects the chosen plant once this pushes it to full bloom. */
   addDroplets: (amount: number) => void;
+  setDisplayName: (name: string) => void;
+  /**
+   * Adds a Together flower. Only the Together session screen calls this, and
+   * only after the server has confirmed the shared plant survived.
+   */
+  collectFlower: (plantId: string) => void;
   /** Called when the collection popup is dismissed. */
   acknowledgeCollection: () => void;
   /** Home calls this once it's finished playing the arrival animation. */
@@ -70,6 +80,9 @@ export const useZenBalanceStore = create<ZenBalanceState>()(
       currentStreak: 0,
       collectedAt: {},
       pendingCollection: null,
+      // Overwritten by the persisted id on every launch after the first.
+      deviceId: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`,
+      displayName: '',
       setLanguage: (language) => set(() => ({ languagePreference: language })),
       completeOnboarding: () => set(() => ({ hasCompletedOnboarding: true })),
       switchPlant: (plantId, resetDroplets) =>
@@ -80,7 +93,7 @@ export const useZenBalanceStore = create<ZenBalanceState>()(
       addDroplets: (amount) =>
         set((state) => {
           const totalDroplets = state.totalDroplets + amount;
-          const plant = findPlant(state.chosenPlantId);
+          const plant = findSoloPlant(state.chosenPlantId);
           if (!plant || totalDroplets < plant.dropletsToBloom) {
             return { totalDroplets, pendingRewardDroplets: amount };
           }
@@ -95,6 +108,9 @@ export const useZenBalanceStore = create<ZenBalanceState>()(
             collectedAt: { [plant.id]: Date.now(), ...state.collectedAt },
           };
         }),
+      setDisplayName: (name) => set(() => ({ displayName: name })),
+      collectFlower: (plantId) =>
+        set((state) => ({ collectedAt: { [plantId]: Date.now(), ...state.collectedAt } })),
       acknowledgeCollection: () => set(() => ({ pendingCollection: null })),
       clearPendingReward: () => set(() => ({ pendingRewardDroplets: null })),
       resetOnboarding: () =>

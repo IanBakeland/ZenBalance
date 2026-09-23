@@ -37,6 +37,10 @@ export type FlowerRevealModalProps = {
   onViewCollection: () => void;
   /** Android back: just dismiss. */
   onClose: () => void;
+  /** Together overrides the solo copy with its own "we did this" wording. */
+  title?: string;
+  body?: string;
+  primaryLabel?: string;
 };
 
 /**
@@ -50,6 +54,9 @@ export function FlowerRevealModal({
   onChooseNext,
   onViewCollection,
   onClose,
+  title,
+  body,
+  primaryLabel,
 }: FlowerRevealModalProps) {
   const theme = useTheme();
   const { t } = useLocalization();
@@ -163,7 +170,11 @@ export function FlowerRevealModal({
               <Animated.View style={[styles.text, textStyle]}>
                 <ThemedView type="surfaceMuted" style={styles.eyebrow}>
                   <SymbolView
-                    name={{ ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' }}
+                    name={
+                      shown.plant.size === 'together'
+                        ? { ios: 'person.2.fill', android: 'group', web: 'group' }
+                        : { ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' }
+                    }
                     size={14}
                     tintColor={theme.warmthAccent}
                   />
@@ -172,15 +183,15 @@ export function FlowerRevealModal({
                   </ThemedText>
                 </ThemedView>
                 <ThemedText type="title" style={styles.centered} accessibilityRole="header">
-                  {t.collection.revealTitle}
+                  {title ?? t.collection.revealTitle}
                 </ThemedText>
                 <ThemedText type="default" themeColor="textSecondary" style={styles.centered}>
-                  {shown.isNew ? t.collection.revealBody : t.collection.revealBodyRepeat}
+                  {body ?? (shown.isNew ? t.collection.revealBody : t.collection.revealBodyRepeat)}
                 </ThemedText>
               </Animated.View>
 
               <Animated.View style={[styles.actions, actionsStyle]}>
-                <PrimaryButton label={t.collection.revealNext} onPress={onChooseNext} />
+                <PrimaryButton label={primaryLabel ?? t.collection.revealNext} onPress={onChooseNext} />
                 <Pressable
                   accessibilityRole="button"
                   onPress={onViewCollection}

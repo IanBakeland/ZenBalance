@@ -17,7 +17,7 @@ import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
 import { PillRadius, Spacing } from '@/constants/theme';
-import { Plants, type PlantSize } from '@/data/plants';
+import { Plants, SoloPlants, type SoloPlantSize } from '@/data/plants';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useReduceMotion } from '@/hooks/use-reduce-motion';
 import { useTheme } from '@/hooks/use-theme';
@@ -27,8 +27,8 @@ import { hapticSelect } from '@/lib/haptics';
 const CYCLE_MS = 2800;
 
 // One entry per size tier: its first flower as the thumbnail, plus the droplet range.
-const Tiers = (['small', 'medium', 'large'] as PlantSize[]).map((size) => {
-  const plants = Plants.filter((plant) => plant.size === size);
+const Tiers = (['small', 'medium', 'large'] as SoloPlantSize[]).map((size) => {
+  const plants = SoloPlants.filter((plant) => plant.size === size);
   return {
     size,
     image: plants[0].image,
@@ -53,7 +53,7 @@ export function NoFlowerState() {
   const [index, setIndex] = useState(0);
   useEffect(() => {
     if (reduceMotion) return;
-    const timer = setInterval(() => setIndex((i) => (i + 1) % Plants.length), CYCLE_MS);
+    const timer = setInterval(() => setIndex((i) => (i + 1) % SoloPlants.length), CYCLE_MS);
     return () => clearInterval(timer);
   }, [reduceMotion]);
 
@@ -98,7 +98,7 @@ export function NoFlowerState() {
           </Animated.View>
           <Animated.View style={[styles.flower, flowerStyle]}>
             <Image
-              source={Plants[index].image}
+              source={SoloPlants[index].image}
               style={styles.fill}
               contentFit="contain"
               transition={{ duration: 900, effect: 'cross-dissolve' }}

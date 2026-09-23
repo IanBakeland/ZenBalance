@@ -16,19 +16,21 @@ export type PrimaryButtonProps = Omit<PressableProps, 'children' | 'style'> & {
  * Carries the app's one unconditional haptic: a single light tap. Screens that
  * mark a real commitment (onboarding done, plant chosen) add `hapticCommit` on top.
  */
-export function PrimaryButton({ label, mode, onPress, ...rest }: PrimaryButtonProps) {
+export function PrimaryButton({ label, mode, onPress, disabled, ...rest }: PrimaryButtonProps) {
   const theme = useTheme(mode);
 
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled }}
+      disabled={disabled}
       onPress={(event) => {
         hapticTap();
         onPress?.(event);
       }}
       style={({ pressed }) => [
         styles.button,
-        { backgroundColor: theme.plantPrimary, opacity: pressed ? 0.5 : 1.0 },
+        { backgroundColor: theme.plantPrimary, opacity: disabled ? 0.4 : pressed ? 0.5 : 1.0 },
       ]}
       {...rest}>
       <ThemedText mode={mode} type="smallBold" themeColor="onPlantPrimary" style={styles.label}>

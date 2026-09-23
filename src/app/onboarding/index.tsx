@@ -1,11 +1,14 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
+import Animated, { Easing, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { MinTapTarget, Spacing } from '@/constants/theme';
+import { SoloPlants } from '@/data/plants';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useTheme } from '@/hooks/use-theme';
 import { useZenBalanceStore, type Language } from '@/hooks/use-zenbalance-store';
@@ -19,6 +22,7 @@ const LanguageOptions: { code: Language; name: string; greeting: string }[] = [
 
 export default function OnboardingWelcomeScreen() {
   const router = useRouter();
+  const theme = useTheme();
   const setLanguage = useZenBalanceStore((s) => s.setLanguage);
   // Pre-selected from the device locale by the store's default, and committed on
   // tap — so every string on screen flips to the new language immediately.
@@ -29,7 +33,12 @@ export default function OnboardingWelcomeScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <View style={styles.hero}>
-        <ThemedText style={styles.mark}>🌱</ThemedText>
+        <Animated.View entering={ZoomIn.duration(700).easing(Easing.out(Easing.cubic))} style={styles.mark}>
+          <View style={[styles.markHalo, { backgroundColor: theme.plantAccent }]} />
+          <ThemedView type="surface" style={styles.markPot}>
+            <Image source={SoloPlants[0].image} style={styles.markFlower} contentFit="contain" />
+          </ThemedView>
+        </Animated.View>
         <ThemedText type="caption" themeColor="textSecondary">
           {t.onboarding.welcome}
         </ThemedText>
@@ -41,7 +50,7 @@ export default function OnboardingWelcomeScreen() {
         </ThemedText>
       </View>
 
-      <View style={styles.picker}>
+      <Animated.View entering={FadeInDown.delay(250).duration(500)} style={styles.picker}>
         <ThemedText type="heading" style={styles.pickerTitle}>
           {t.onboarding.languageQuestion}
         </ThemedText>
@@ -62,7 +71,7 @@ export default function OnboardingWelcomeScreen() {
         <ThemedText type="caption" themeColor="textSecondary" style={styles.pickerTitle}>
           {t.onboarding.languageHint}
         </ThemedText>
-      </View>
+      </Animated.View>
 
       <PrimaryButton
         label={t.onboarding.continue}
@@ -125,8 +134,33 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   mark: {
-    fontSize: 56,
-    marginBottom: Spacing.two,
+    width: 150,
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.three,
+  },
+  markHalo: {
+    position: 'absolute',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    opacity: 0.2,
+  },
+  markPot: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  markFlower: {
+    width: 84,
+    height: 84,
   },
   tagline: {
     textAlign: 'center',

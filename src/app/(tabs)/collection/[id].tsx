@@ -19,6 +19,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { BottomTabInset, MaxContentWidth, PillRadius, Spacing } from '@/constants/theme';
 import { findPlant } from '@/data/plants';
+import { formatDuration } from '@/data/sessionDurations';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useReduceMotion } from '@/hooks/use-reduce-motion';
 import { useTheme } from '@/hooks/use-theme';
@@ -91,6 +92,9 @@ export default function FlowerDetailScreen() {
           entering={FadeInDown.delay(150).duration(450).easing(Easing.out(Easing.cubic))}
           style={styles.text}>
           <ThemedView type="surfaceMuted" style={styles.chip}>
+            {plant.size === 'together' ? (
+              <SymbolView name={{ ios: 'person.2.fill', android: 'group', web: 'group' }} size={14} tintColor={theme.plantPrimary} />
+            ) : null}
             <ThemedText type="smallBold" themeColor="plantPrimary">
               {t.sizes[plant.size]}
             </ThemedText>
@@ -106,12 +110,21 @@ export default function FlowerDetailScreen() {
         <Animated.View
           entering={FadeInDown.delay(260).duration(450).easing(Easing.out(Easing.cubic))}
           style={styles.stats}>
-          <Stat
-            icon={{ ios: 'drop.fill', android: 'water_drop', web: 'water_drop' }}
-            tint={theme.droplet}
-            label={t.collection.grownWith}
-            value={`${plant.dropletsToBloom} ${t.home.droplets}`}
-          />
+          {plant.size === 'together' ? (
+            <Stat
+              icon={{ ios: 'person.2.fill', android: 'group', web: 'group' }}
+              tint={theme.plantPrimary}
+              label={t.together.grownTogether}
+              value={formatDuration(plant.togetherSeconds, t.duration.seconds, t.duration.minutes)}
+            />
+          ) : (
+            <Stat
+              icon={{ ios: 'drop.fill', android: 'water_drop', web: 'water_drop' }}
+              tint={theme.droplet}
+              label={t.collection.grownWith}
+              value={`${plant.dropletsToBloom} ${t.home.droplets}`}
+            />
+          )}
           <Stat
             icon={{ ios: 'calendar', android: 'calendar_today', web: 'calendar_today' }}
             tint={theme.warmthAccent}
@@ -188,6 +201,9 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
     borderRadius: PillRadius,

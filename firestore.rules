@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// Paste into Firebase console → Firestore Database → Rules (or `firebase deploy
+// --only firestore:rules`). There's no sign-in, so these don't stop someone who
+// knows a code from writing to that session — they enforce the game's rules:
+// a dead plant stays dead, and the start moment comes from the server clock.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /sessions/{code} {
+      allow read: if true;
+
+      allow create: if code.size() == 5
+        && request.resource.data.plantAlive == true
+        && request.resource.data.startTimestamp == null;
+
+      allow update: if isReusable() || (
+        // Once the plant dies the session is failed for good.
+        !(resource.data.plantAlive == false && request.resource.data.plantAlive == true)
+        // The shared start is written exactly once, by the server clock.
+        && (resource.data.startTimestamp == null
+          ? (request.resource.data.startTimestamp == null
+            || request.resource.data.startTimestamp == request.time)
+          : request.resource.data.startTimestamp == resource.data.startTimestamp)
+      );
+
+      allow delete: if false;
+
+      // A closed or day-old session's code may be taken over by a new host.
+      function isReusable() {
+        return (resource.data.closed == true
+            || resource.data.createdAt < request.time - duration.value(12, 'h'))
+          && request.resource.data.plantAlive == true
+          && request.resource.data.startTimestamp == null;
+      }
+    }
+  }
+}

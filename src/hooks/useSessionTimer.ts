@@ -4,6 +4,12 @@ export type SessionOutcome = 'success' | 'cancelled' | 'moved';
 
 interface UseSessionTimerOptions {
   durationSeconds: number;
+  /**
+   * `Date.now()`-based start, for Together: every device passes the same
+   * shared start converted to its own clock, so all countdowns line up.
+   * A start in the future (the lead-in) simply reads as > durationSeconds left.
+   */
+  startTime?: number;
   onComplete: (outcome: SessionOutcome) => void;
 }
 
@@ -11,10 +17,10 @@ interface UseSessionTimerOptions {
  * Countdown driven by `Date.now()`, never raw tick counts (PROJECT_PLAN.md section 7,
  * Step 4) — setInterval ticks drift, especially once the app backgrounds/foregrounds.
  */
-export function useSessionTimer({ durationSeconds, onComplete }: UseSessionTimerOptions) {
+export function useSessionTimer({ durationSeconds, startTime: sharedStartTime, onComplete }: UseSessionTimerOptions) {
   // Lazy useState initializer, not useRef(Date.now()) — the initializer is the
   // one render-safe place for one-time impure work (react-hooks/purity).
-  const [startTime] = useState(() => Date.now());
+  const [startTime] = useState(() => sharedStartTime ?? Date.now());
   const finished = useRef(false);
   const intervalId = useRef<ReturnType<typeof setInterval> | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState(durationSeconds);

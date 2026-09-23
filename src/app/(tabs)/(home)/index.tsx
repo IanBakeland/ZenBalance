@@ -23,7 +23,7 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { findPlant, growthStage } from '@/data/plants';
+import { findSoloPlant, growthStage } from '@/data/plants';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useReduceMotion } from '@/hooks/use-reduce-motion';
 import { useTheme } from '@/hooks/use-theme';
@@ -44,7 +44,7 @@ export default function HomeScreen() {
   const acknowledgeCollection = useZenBalanceStore((s) => s.acknowledgeCollection);
   // A just-collected flower has already left the pot in the store; keep it on
   // screen in full bloom until the collection popup is dismissed.
-  const plant = findPlant(pendingCollection?.plantId ?? chosenPlantId);
+  const plant = findSoloPlant(pendingCollection?.plantId ?? chosenPlantId);
   const droplets = pendingCollection && plant ? plant.dropletsToBloom : totalDroplets;
   // Hold the stage back until the droplet rain has landed, so the flower grows
   // as the water arrives rather than before it.
@@ -157,17 +157,20 @@ export default function HomeScreen() {
   }));
 
   return (
-    <ThemedView
-      style={[
-        styles.container,
-        {
-          paddingTop: insets.top + Spacing.three,
-          paddingBottom: insets.bottom + BottomTabInset + Spacing.three,
-        },
-      ]}>
+    <ThemedView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+      {/* Insets live on the scroll content, not the screen: padding the screen
+          left a dead band above the tab bar where scrolled content got cut off. */}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: insets.top + Spacing.three,
+            paddingBottom: insets.bottom + BottomTabInset + Spacing.three,
+          },
+        ]}>
         <View style={styles.header}>
           <View>
             {plant && !pendingCollection ? (

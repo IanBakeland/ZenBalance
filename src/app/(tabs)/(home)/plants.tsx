@@ -10,7 +10,7 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { BottomTabInset, MinTapTarget, Spacing } from '@/constants/theme';
-import { Plants, type Plant } from '@/data/plants';
+import { SoloPlants, type SoloPlant } from '@/data/plants';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useTheme } from '@/hooks/use-theme';
 import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
@@ -27,9 +27,9 @@ export default function PlantPickerScreen() {
 
   // Switching plants while the current one has progress resets that progress —
   // confirm first rather than losing it silently.
-  const [pendingPlant, setPendingPlant] = useState<Plant | null>(null);
+  const [pendingPlant, setPendingPlant] = useState<SoloPlant | null>(null);
 
-  function selectPlant(plant: Plant) {
+  function selectPlant(plant: SoloPlant) {
     if (plant.id === chosenPlantId) {
       router.back();
       return;
@@ -56,7 +56,7 @@ export default function PlantPickerScreen() {
       <Stack.Screen options={{ title: t.plants.headerTitle, headerShadowVisible: false }} />
 
       <FlashList
-        data={Plants}
+        data={SoloPlants}
         keyExtractor={(plant) => plant.id}
         contentContainerStyle={{
           paddingHorizontal: Spacing.four,
@@ -125,7 +125,7 @@ function PlantOption({
   isCollected,
   onPress,
 }: {
-  plant: Plant;
+  plant: SoloPlant;
   isChosen: boolean;
   isCollected: boolean;
   onPress: () => void;

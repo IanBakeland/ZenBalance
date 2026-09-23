@@ -41,6 +41,7 @@ const Rows: Row[] = Plants.flatMap((plant, index) => {
 export default function CollectionScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const theme = useTheme();
   const { t } = useLocalization();
   const collectedAt = useZenBalanceStore((s) => s.collectedAt);
   const { highlight } = useLocalSearchParams<{ highlight?: string }>();
@@ -87,7 +88,16 @@ export default function CollectionScreen() {
         renderItem={({ item }) =>
           item.type === 'section' ? (
             <View style={styles.section}>
-              <ThemedText type="heading">{t.sizes[item.size]}</ThemedText>
+              <View style={styles.sectionTitle}>
+                {item.size === 'together' ? (
+                  <SymbolView
+                    name={{ ios: 'person.2.fill', android: 'group', web: 'group' }}
+                    size={16}
+                    tintColor={theme.warmthAccent}
+                  />
+                ) : null}
+                <ThemedText type="heading">{t.sizes[item.size]}</ThemedText>
+              </View>
               <ThemedText type="caption" themeColor="textSecondary">
                 {Plants.filter((p) => p.size === item.size && p.id in collectedAt).length} /{' '}
                 {Plants.filter((p) => p.size === item.size).length}
@@ -236,6 +246,8 @@ function FlowerCard({
   }));
   const glowStyle = useAnimatedStyle(() => ({ opacity: glow.value * 0.35 }));
 
+  const isTogether = plant.size === 'together';
+
   const content = (
     <ThemedView
       type={isCollected ? 'surface' : 'surfaceMuted'}
@@ -250,6 +262,14 @@ function FlowerCard({
             <Animated.View style={[styles.artGlow, glowStyle, { backgroundColor: theme.warmthAccent }]} />
             <ThemedView type="surfaceMuted" style={styles.artDisc} />
             <Image source={plant.image} style={styles.artImage} contentFit="contain" transition={200} />
+            {isTogether ? (
+              <ThemedView type="surfaceMuted" style={styles.togetherBadge}>
+                <SymbolView name={{ ios: 'person.2.fill', android: 'group', web: 'group' }} size={11} tintColor={theme.plantPrimary} />
+                <ThemedText type="caption" themeColor="plantPrimary" style={styles.togetherBadgeText}>
+                  {t.together.badge}
+                </ThemedText>
+              </ThemedView>
+            ) : null}
           </>
         ) : (
           <>
@@ -262,7 +282,11 @@ function FlowerCard({
             />
             <ThemedView type="surface" style={styles.lock}>
               <SymbolView
-                name={{ ios: 'lock.fill', android: 'lock', web: 'lock' }}
+                name={
+                  isTogether
+                    ? { ios: 'person.2.fill', android: 'group', web: 'group' }
+                    : { ios: 'lock.fill', android: 'lock', web: 'lock' }
+                }
                 size={14}
                 tintColor={theme.textSecondary}
               />
@@ -287,7 +311,7 @@ function FlowerCard({
           </View>
         ) : (
           <ThemedText type="caption" themeColor="textSecondary" numberOfLines={1}>
-            {isCollected ? t.plants.collected : t.collection.locked}
+            {isCollected ? t.plants.collected : isTogether ? t.collection.togetherOnly : t.collection.locked}
           </ThemedText>
         )}
       </View>
@@ -394,6 +418,25 @@ const styles = StyleSheet.create({
   emptyCta: {
     alignSelf: 'stretch',
     marginTop: Spacing.two,
+  },
+  sectionTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  togetherBadge: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.half,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: Spacing.half,
+    borderRadius: PillRadius,
+  },
+  togetherBadgeText: {
+    fontWeight: '700',
   },
   section: {
     flexDirection: 'row',

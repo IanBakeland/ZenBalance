@@ -21,6 +21,12 @@ export const SessionDurations: readonly SessionDurationOption[] = [
   { id: 'min60', seconds: 60 * 60, droplets: 7 },
 ];
 
+/** "30 sec", "25 min", "120 min" — shared by the timer picker and Together flowers. */
+export function formatDuration(seconds: number, unitSeconds: string, unitMinutes: string) {
+  if (seconds < 60) return `${seconds} ${unitSeconds}`;
+  return `${Math.round(seconds / 60)} ${unitMinutes}`;
+}
+
 export function findSessionDuration(id: string | null): SessionDurationOption | undefined {
   return SessionDurations.find((option) => option.id === id);
 }

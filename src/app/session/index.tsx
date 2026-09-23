@@ -14,6 +14,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { SessionCountdown } from '@/components/SessionCountdown';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { MinTapTarget, Spacing } from '@/constants/theme';
@@ -29,12 +30,6 @@ import { hapticCommit, hapticFailure, hapticMovementWarning, hapticSelect } from
 // together, matching its 25-minute / 3-droplet tier.
 const DEFAULT_DURATION_SECONDS = 25 * 60;
 const DEFAULT_DROPLETS_REWARD = 3;
-
-function formatRemaining(totalSeconds: number) {
-  const seconds = Math.ceil(totalSeconds);
-  const minutes = Math.floor(seconds / 60);
-  return `${minutes}:${(seconds % 60).toString().padStart(2, '0')}`;
-}
 
 /**
  * The immersive, tab-bar-free focus mode: just the countdown, which settles
@@ -113,22 +108,6 @@ export default function SessionScreen() {
     transform: [{ scale: interpolate(rewardPop.value, [0, 1], [0.9, 1]) }],
   }));
 
-  // No looping animation running for the whole session (that's what cost
-  // battery). Instead the countdown itself gets a soft one-shot settle each
-  // time the second changes — a few hundred ms of work once a second, not a
-  // continuous 60fps loop for the full 25–45 minutes the screen stays on.
-  const tick = useSharedValue(1);
-
-  useEffect(() => {
-    if (reduceMotion) return;
-    tick.value = 0.4;
-    tick.value = withTiming(1, { duration: 550, easing: Easing.out(Easing.cubic) });
-  }, [displaySeconds, reduceMotion, tick]);
-
-  const timerStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(tick.value, [0.4, 1], [0.5, 1]),
-    transform: [{ translateY: interpolate(tick.value, [0.4, 1], [4, 0]) }],
-  }));
 
   // Three distinct outcomes get three distinct looks — "you moved" (a real
   // sensor failure) reads differently from "you ended it" (a deliberate
@@ -191,11 +170,7 @@ export default function SessionScreen() {
             </View>
           </>
         ) : (
-          <Animated.View style={timerStyle}>
-            <ThemedText mode="session" type="timer" style={styles.timerText}>
-              {formatRemaining(displaySeconds)}
-            </ThemedText>
-          </Animated.View>
+          <SessionCountdown seconds={displaySeconds} />
         )}
       </View>
 
@@ -249,11 +224,6 @@ const styles = StyleSheet.create({
   },
   outcomeTitle: {
     textAlign: 'center',
-  },
-  // Softer than session-text's default #D8D8D2 — this is the one giant, stared-at
-  // number on the screen, so it gets a touch more dimming than regular session copy.
-  timerText: {
-    color: '#C6C4BD',
   },
   stopButton: {
     minHeight: MinTapTarget,
