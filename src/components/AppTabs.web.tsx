@@ -11,8 +11,8 @@ import { Pressable, View, StyleSheet } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
-import { MaxContentWidth, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { useLocalization } from '@/hooks/useLocalization';
+import { MaxContentWidth, MinTapTarget, PillRadius, Spacing } from '@/constants/Theme';
+import { useLocalization } from '@/hooks/UseLocalization';
 
 export default function AppTabs() {
   const { t } = useLocalization();

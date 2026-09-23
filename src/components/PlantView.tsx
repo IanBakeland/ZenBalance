@@ -12,11 +12,11 @@ import Animated, {
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
-import { Spacing, type ThemeMode } from '@/constants/theme';
-import { StageCount, type Plant } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
+import { Spacing, type ThemeMode } from '@/constants/Theme';
+import { StageCount, type Plant } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
 
 export type PlantViewProps = {
   plant: Plant;

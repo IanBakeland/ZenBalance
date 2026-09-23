@@ -124,7 +124,7 @@ src/
     session/             # ready screen, solo session, Together session
   components/            # PlantView, TutorialScenes, FlowerRevealModal, themed components, tab bar
   constants/             # theme tokens (incl. the AMOLED session palette)
-  data/                  # plants.ts, sessionDurations.ts
+  data/                  # Plants.ts, SessionDurations.ts
   hooks/                 # Zustand store, useStillnessDetector, useSessionTimer, useTogetherSession
   lib/                   # Firebase setup, Together session logic, haptics
   locales/               # en.json, nl.json

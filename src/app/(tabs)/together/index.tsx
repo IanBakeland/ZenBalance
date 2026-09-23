@@ -19,16 +19,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, MaxContentWidth, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { formatDuration } from '@/data/sessionDurations';
-import { TogetherFlowers } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { isFirebaseConfigured } from '@/lib/firebase';
-import { hapticCommit, hapticMovementWarning } from '@/lib/haptics';
-import { CODE_LENGTH, hostSession, joinSession, normalizeCode, TogetherError } from '@/lib/together';
+import { BottomTabInset, MaxContentWidth, MinTapTarget, PillRadius, Spacing } from '@/constants/Theme';
+import { formatDuration } from '@/data/SessionDurations';
+import { TogetherFlowers } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
+import { isFirebaseConfigured } from '@/lib/Firebase';
+import { hapticCommit, hapticMovementWarning } from '@/lib/Haptics';
+import { CODE_LENGTH, hostSession, joinSession, normalizeCode, TogetherError } from '@/lib/Together';
 
 export default function TogetherScreen() {
   const router = useRouter();

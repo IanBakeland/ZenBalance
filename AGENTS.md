@@ -28,8 +28,8 @@ npm start
 zenbalance/
   src/
     app/            # screens — Expo Router file-based routing
-    components/      # ThemedText, ThemedView, app-tabs, app-tabs.web, PlantView, ...
-    constants/        # theme.ts (colors/tokens from STYLE_GUIDE.md), BottomTabInset, ...
+    components/      # ThemedText, ThemedView, AppTabs, AppTabs.web, PlantView, ...
+    constants/        # Theme.ts (colors/tokens from STYLE_GUIDE.md), BottomTabInset, ...
     hooks/            # use-theme, use-order-store-style Zustand stores, useStillnessDetector, ...
     data/             # any static data files (mirrors the course's coffees.ts pattern), if needed
   assets/
@@ -41,12 +41,12 @@ Do not invent a different top-level layout (e.g. don't put `app/` at the project
 
 Use **Expo Router** (file-based routing under `src/app`) — never React Navigation set up manually, and never a third routing library. Specifically:
 
-- The **root tab bar** uses `<NativeTabs>` (from `expo-router`, renders the platform's real native tab bar), defined in `src/components/app-tabs.tsx`, wrapped by `src/app/_layout.tsx`.
-- Because `NativeTabs` doesn't exist on web, provide a **`src/components/app-tabs.web.tsx`** file with a hand-built JS tab bar (using `TabTrigger`/`TabButton` as in the course example) — Expo automatically picks the `.web.tsx` version when running on web.
+- The **root tab bar** uses `<NativeTabs>` (from `expo-router`, renders the platform's real native tab bar), defined in `src/components/AppTabs.tsx`, wrapped by `src/app/_layout.tsx`.
+- Because `NativeTabs` doesn't exist on web, provide a **`src/components/AppTabs.web.tsx`** file with a hand-built JS tab bar (using `TabTrigger`/`TabButton` as in the course example) — Expo automatically picks the `.web.tsx` version when running on web.
 - Any tab that needs to drill down into a detail/sub-screen gets its **own nested Stack**: a subfolder named `(groupname)` (parenthesized = doesn't add a URL segment) containing a `_layout.tsx` that just re-exports `Stack` from `expo-router`, plus an `index.tsx` and any child screens. This is exactly the `(index)` pattern from the course's coffee list → coffee detail flow.
 - A screen that takes a parameter (e.g. a specific plant's detail, or a specific group session) is a file named `[param].tsx`, read via `useLocalSearchParams()`. Convert numeric/typed ids explicitly (TypeScript will flag the mismatch otherwise, exactly as in the course example).
 - Set a screen's header title dynamically with `<Stack.Screen options={{ title: ... }} />` inside the screen component, not by hardcoding it in the layout.
-- Handle content that sits near the floating native tab bar with `useSafeAreaInsets()` combined with a `BottomTabInset` constant (add this constant to `src/constants/theme.ts`, matching the course's pattern), applied as bottom padding.
+- Handle content that sits near the floating native tab bar with `useSafeAreaInsets()` combined with a `BottomTabInset` constant (add this constant to `src/constants/Theme.ts`, matching the course's pattern), applied as bottom padding.
 
 **Suggested ZenBalance route map, using these exact patterns:**
 
@@ -68,7 +68,7 @@ src/app/
     [code].tsx                    # the joined session's lobby/live screen, code as the param
 ```
 
-`src/components/app-tabs.tsx` defines two `NativeTabs.Trigger`s: `(home)` (label "Home", a leaf/plant `sf`/`md` icon) and `together` (label "Together", a people/group `sf`/`md` icon) — mirror the course's icon-picking approach (`SymbolView`/`NativeTabs.Trigger.Icon` with `sf`/`md` props, chosen from SF Symbols / Material Symbols). Mirror the trigger names in `app-tabs.web.tsx` using `href`, exactly like the course example.
+`src/components/AppTabs.tsx` defines two `NativeTabs.Trigger`s: `(home)` (label "Home", a leaf/plant `sf`/`md` icon) and `together` (label "Together", a people/group `sf`/`md` icon) — mirror the course's icon-picking approach (`SymbolView`/`NativeTabs.Trigger.Icon` with `sf`/`md` props, chosen from SF Symbols / Material Symbols). Mirror the trigger names in `AppTabs.web.tsx` using `href`, exactly like the course example.
 
 The onboarding flow (`src/app/onboarding/`) is not a tab — it's a separate Stack shown conditionally. In `src/app/_layout.tsx`, read `hasCompletedOnboarding` from the Zustand store (section 1.3) and render either the onboarding Stack or the main `<NativeTabs>` layout — use `Redirect` from `expo-router` if you prefer a redirect-based approach over conditional rendering, whichever reads cleaner once you're implementing it.
 
@@ -114,11 +114,11 @@ export const useZenBalanceStore = create<ZenBalanceState>()(
 );
 ```
 
-Put this in `src/hooks/use-zenbalance-store.ts`, naming it after the course's `use-order-store.ts`. Group-session state (Phase 2, section 2.6/6 of `PROJECT_PLAN.md`) does **not** belong in this persisted store — it's live/ephemeral Firebase data, read directly from Firestore in the `together/` screens (a small separate non-persisted Zustand store, or plain `useState` + a Firestore listener, is fine there).
+Put this in `src/hooks/UseZenBalanceStore.ts`, naming it after the course's `use-order-store.ts`. Group-session state (Phase 2, section 2.6/6 of `PROJECT_PLAN.md`) does **not** belong in this persisted store — it's live/ephemeral Firebase data, read directly from Firestore in the `together/` screens (a small separate non-persisted Zustand store, or plain `useState` + a Firestore listener, is fine there).
 
 ### 1.4 UI building blocks — reuse the course's, don't reinvent them
 
-- **Theming:** extend the starter template's `ThemedText` / `ThemedView` components and `useTheme()` hook rather than building a separate theming system. Add every color token from `STYLE_GUIDE.md` (light palette, dark palette, and the separate `session-*` AMOLED palette) into `src/constants/theme.ts` alongside whatever the template already defines there. The session screen should switch to the `session-*` token set specifically, not the app's regular dark theme.
+- **Theming:** extend the starter template's `ThemedText` / `ThemedView` components and `useTheme()` hook rather than building a separate theming system. Add every color token from `STYLE_GUIDE.md` (light palette, dark palette, and the separate `session-*` AMOLED palette) into `src/constants/Theme.ts` alongside whatever the template already defines there. The session screen should switch to the `session-*` token set specifically, not the app's regular dark theme.
 - **Images:** use `expo-image`'s `<Image>` everywhere (plant illustrations, share previews) instead of React Native's core `Image` — it's already part of the starter template.
 - **Icons:** use `expo-symbols`' `<SymbolView>` (`sf` prop for iOS/SF Symbols, `md` prop for Android/Material Symbols) for system-style icons (settings, share, back, tab icons), exactly as shown in the course material.
 - **Lists:** any list of more than a few items (e.g. a plant-size picker with several options, a group-session member list, a future session-history view) uses `@shopify/flash-list`'s `<FlashList>`, not a plain `ScrollView.map()` or core `FlatList` — this is already on the project's approved third-party library list and is the pattern taught in class.
@@ -137,7 +137,7 @@ Anything sensor-, timer-, haptics-, sharing-, notification-, or Firebase-related
 2. Read `docs/PROJECT_PLAN.md` section 7 ("Full step-by-step plan") and follow it in order, phase by phase, step by step, checkbox by checkbox.
 3. When a step involves building a screen or navigation, use the route map and patterns in section 1.2 above.
 4. When a step involves shared/persisted state, use the Zustand store pattern in section 1.3.
-5. When a step involves visual styling, pull the exact tokens from `docs/STYLE_GUIDE.md` into `src/constants/theme.ts` and use them through `ThemedText`/`ThemedView`/`useTheme()`.
+5. When a step involves visual styling, pull the exact tokens from `docs/STYLE_GUIDE.md` into `src/constants/Theme.ts` and use them through `ThemedText`/`ThemedView`/`useTheme()`.
 6. If `docs/PROJECT_PLAN.md` or `docs/STYLE_GUIDE.md` ever seems to conflict with something in this file, this file's conventions win for *how* the code is structured; the other two files win for *what* the product does and *how it looks*.
 
 

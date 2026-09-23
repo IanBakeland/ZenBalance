@@ -3,9 +3,9 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from 'expo-
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
+import { Colors } from '@/constants/Theme';
+import { useColorScheme } from '@/hooks/UseColorScheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
 
 SplashScreen.preventAutoHideAsync();
 

@@ -3,7 +3,7 @@ import { getLocales } from 'expo-localization';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { findSoloPlant } from '@/data/plants';
+import { findSoloPlant } from '@/data/Plants';
 
 export type Language = 'nl' | 'en';
 

@@ -9,12 +9,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, MinTapTarget, Spacing } from '@/constants/theme';
-import { SoloPlants, type SoloPlant } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { hapticCommit, hapticSelect } from '@/lib/haptics';
+import { BottomTabInset, MinTapTarget, Spacing } from '@/constants/Theme';
+import { SoloPlants, type SoloPlant } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
+import { hapticCommit, hapticSelect } from '@/lib/Haptics';
 
 export default function PlantPickerScreen() {
   const router = useRouter();

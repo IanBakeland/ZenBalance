@@ -6,11 +6,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { formatDuration, SessionDurations, type SessionDurationOption } from '@/data/sessionDurations';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useTheme } from '@/hooks/use-theme';
-import { hapticSelect } from '@/lib/haptics';
+import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/Theme';
+import { formatDuration, SessionDurations, type SessionDurationOption } from '@/data/SessionDurations';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useTheme } from '@/hooks/UseTheme';
+import { hapticSelect } from '@/lib/Haptics';
 
 export default function DurationPickerScreen() {
   const router = useRouter();

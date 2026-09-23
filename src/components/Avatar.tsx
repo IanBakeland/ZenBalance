@@ -2,8 +2,8 @@ import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from './ThemedText';
 
-import type { ThemeMode } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import type { ThemeMode } from '@/constants/Theme';
+import { useTheme } from '@/hooks/UseTheme';
 
 export type AvatarProps = {
   /** Stable per person, so a friend has the same colour on every device. */

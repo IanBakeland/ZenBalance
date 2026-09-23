@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
 
-import { getDb } from '@/lib/firebase';
-import type { TogetherSession } from '@/lib/together';
+import { getDb } from '@/lib/Firebase';
+import type { TogetherSession } from '@/lib/Together';
 
 export type TogetherSessionStatus = 'connecting' | 'live' | 'missing' | 'error';
 

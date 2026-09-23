@@ -1,7 +1,7 @@
 import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
 
-import { Fonts, ThemeColor, ThemeMode } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { Fonts, ThemeColor, ThemeMode } from '@/constants/Theme';
+import { useTheme } from '@/hooks/UseTheme';
 
 export type ThemedTextProps = TextProps & {
   type?: 'default' | 'title' | 'subtitle' | 'heading' | 'caption' | 'small' | 'smallBold' | 'link' | 'timer' | 'code';

@@ -8,8 +8,8 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 
-import { findTogetherFlower, TogetherFlowers, type TogetherFlowerId } from '@/data/plants';
-import { getDb, withTimeout } from '@/lib/firebase';
+import { findTogetherFlower, TogetherFlowers, type TogetherFlowerId } from '@/data/Plants';
+import { getDb, withTimeout } from '@/lib/Firebase';
 
 /**
  * Together sessions: one Firestore document per session, `sessions/{code}`

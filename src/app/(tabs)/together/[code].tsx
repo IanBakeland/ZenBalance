@@ -23,16 +23,16 @@ import { Avatar } from '@/components/Avatar';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, MaxContentWidth, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { findTogetherFlower, TogetherFlowers } from '@/data/plants';
-import { formatDuration } from '@/data/sessionDurations';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
-import { useTogetherSession } from '@/hooks/useTogetherSession';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { hapticMovementWarning, hapticSelect } from '@/lib/haptics';
-import { chooseFlower, leaveSession, startSession } from '@/lib/together';
+import { BottomTabInset, MaxContentWidth, MinTapTarget, PillRadius, Spacing } from '@/constants/Theme';
+import { findTogetherFlower, TogetherFlowers } from '@/data/Plants';
+import { formatDuration } from '@/data/SessionDurations';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
+import { useTogetherSession } from '@/hooks/UseTogetherSession';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
+import { hapticMovementWarning, hapticSelect } from '@/lib/Haptics';
+import { chooseFlower, leaveSession, startSession } from '@/lib/Together';
 
 export default function TogetherLobbyScreen() {
   const { code: codeParam } = useLocalSearchParams<{ code: string }>();

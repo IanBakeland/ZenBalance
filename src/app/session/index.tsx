@@ -17,14 +17,14 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { SessionCountdown } from '@/components/SessionCountdown';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { MinTapTarget, Spacing } from '@/constants/theme';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useSessionTimer, type SessionOutcome } from '@/hooks/useSessionTimer';
-import { useStillnessDetector } from '@/hooks/useStillnessDetector';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { hapticCommit, hapticFailure, hapticMovementWarning, hapticSelect } from '@/lib/haptics';
+import { MinTapTarget, Spacing } from '@/constants/Theme';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useSessionTimer, type SessionOutcome } from '@/hooks/UseSessionTimer';
+import { useStillnessDetector } from '@/hooks/UseStillnessDetector';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
+import { hapticCommit, hapticFailure, hapticMovementWarning, hapticSelect } from '@/lib/Haptics';
 
 // Deep-link fallback only — the duration picker always supplies both params
 // together, matching its 25-minute / 3-droplet tier.

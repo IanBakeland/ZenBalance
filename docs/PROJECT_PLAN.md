@@ -162,17 +162,17 @@ eas build --profile development
 
 ## 5. Data & logic modules (beyond navigation)
 
-Section 1.1 of `AGENT_INSTRUCTIONS.md` covers where screens and components live. Beyond that, add these logic modules under `src/hooks/` and `src/lib/` (or fold the Zustand actions directly into `use-zenbalance-store.ts` per `AGENT_INSTRUCTIONS.md` section 1.3 — either is fine, just don't duplicate the same state in two places):
+Section 1.1 of `AGENT_INSTRUCTIONS.md` covers where screens and components live. Beyond that, add these logic modules under `src/hooks/` and `src/lib/` (or fold the Zustand actions directly into `UseZenBalanceStore.ts` per `AGENT_INSTRUCTIONS.md` section 1.3 — either is fine, just don't duplicate the same state in two places):
 
 ```
 src/
   hooks/
-    useStillnessDetector.ts     # wraps expo-sensors Accelerometer + threshold logic
-    useSessionTimer.ts          # timestamp-based countdown
-    use-zenbalance-store.ts     # Zustand store + AsyncStorage persistence (see AGENT_INSTRUCTIONS.md 1.3)
-    useLocalization.ts          # reads languagePreference from the store, returns matching strings
+    UseStillnessDetector.ts     # wraps expo-sensors Accelerometer + threshold logic
+    UseSessionTimer.ts          # timestamp-based countdown
+    UseZenBalanceStore.ts       # Zustand store + AsyncStorage persistence (see AGENT_INSTRUCTIONS.md 1.3)
+    UseLocalization.ts          # reads languagePreference from the store, returns matching strings
   lib/
-    firebase.ts                  # Firebase init + group session helpers (Phase 2 only)
+    Firebase.ts                  # Firebase init + group session helpers (Phase 2 only)
     plantGrowth.ts                # droplet math: plant size thresholds, stage lookup
   locales/
     en.json
@@ -185,7 +185,7 @@ src/
 
 ## 6. Data model (local storage)
 
-Fields on the persisted Zustand store (`use-zenbalance-store.ts`, `AGENT_INSTRUCTIONS.md` section 1.3), backed by `AsyncStorage` through the `persist` middleware — not hand-written `AsyncStorage.getItem`/`setItem` calls:
+Fields on the persisted Zustand store (`UseZenBalanceStore.ts`, `AGENT_INSTRUCTIONS.md` section 1.3), backed by `AsyncStorage` through the `persist` middleware — not hand-written `AsyncStorage.getItem`/`setItem` calls:
 
 - `hasCompletedOnboarding: boolean`
 - `languagePreference: 'nl' | 'en'`
@@ -233,19 +233,19 @@ This phase is deliberately ordered **UI first, sensors last**: build every scree
 - [ ] Build the 2-step onboarding flow as pure UI: welcome + language picker (Dutch/English) → mechanic explanation (tutorial), as the screens under `src/app/onboarding/` from the route map. Language comes first so the tutorial can be read in the chosen language. The plant picker is **not** part of onboarding — see Step 3.
 - [ ] Read the device locale via `expo-localization` to pre-select NL or EN as the default; let the user tap to override it.
 - [ ] Add `locales/en.json` and `locales/nl.json` with the strings used so far, plus a small `useLocalization()` hook that reads the store's `languagePreference`.
-- [ ] Set up `src/hooks/use-zenbalance-store.ts` per `AGENT_INSTRUCTIONS.md` section 1.3 (Zustand + `persist` + AsyncStorage) with at least `hasCompletedOnboarding`, `languagePreference`, and `chosenPlantId`; call its `completeOnboarding(language)` action when onboarding finishes. `chosenPlantId` stays `null` until Step 3's picker sets it.
+- [ ] Set up `src/hooks/UseZenBalanceStore.ts` per `AGENT_INSTRUCTIONS.md` section 1.3 (Zustand + `persist` + AsyncStorage) with at least `hasCompletedOnboarding`, `languagePreference`, and `chosenPlantId`; call its `completeOnboarding(language)` action when onboarding finishes. `chosenPlantId` stays `null` until Step 3's picker sets it.
 - [ ] Wire the root layout to actually gate on `hasCompletedOnboarding` now (show onboarding vs. the tab navigator).
 - [ ] **Test:** fresh-install the app (clear storage), confirm onboarding shows once and never again after completing it, and confirm the language choice actually changes visible copy — including on the tutorial screen that follows it.
 
 **Step 3 — Home screen UI + plant picker**
-- [ ] Add `src/data/plants.ts` (a `Plant` type mirroring the course's `Coffee`, one entry per size, with each plant's `dropletsToBloom` threshold).
+- [ ] Add `src/data/Plants.ts` (a `Plant` type mirroring the course's `Coffee`, one entry per size, with each plant's `dropletsToBloom` threshold).
 - [ ] Build `components/PlantView.tsx` rendering the chosen plant at a **hardcoded/mocked growth stage** for now (real droplet-driven growth comes in Step 5).
 - [ ] Build the plant picker as its own screen in the Home stack (`(home)/plants.tsx`, a `FlashList` per `AGENT_INSTRUCTIONS.md` section 1.4). It sets `chosenPlantId`, and is reachable both from the empty state and from a "change plant" control, so the choice is never permanent.
 - [ ] Build the Home screen: `PlantView` + a "Start session" button + a session-duration picker. When `chosenPlantId` is `null` (every freshly onboarded user), show a "choose your plant" empty state instead of the plant and the start button.
 - [ ] **Test:** finish onboarding → land on the empty state → pick a plant → confirm it renders and survives a restart → change to a different plant and confirm droplets carry over → pick a duration and see the button ready to start; nothing needs to actually start a session yet.
 
 **Step 4 — Session screen UI (manual control only, no sensor yet)**
-- [ ] Create `hooks/useSessionTimer.ts`: store `startTime = Date.now()` plus the chosen `durationSeconds`; on each tick compute remaining time as `durationSeconds - (Date.now() - startTime) / 1000` (never count raw ticks, they drift).
+- [ ] Create `hooks/UseSessionTimer.ts`: store `startTime = Date.now()` plus the chosen `durationSeconds`; on each tick compute remaining time as `durationSeconds - (Date.now() - startTime) / 1000` (never count raw ticks, they drift).
 - [ ] Build the Session screen: countdown display driven by that hook, plus a visible, tappable **"Stop" button** that lets the user manually end the session early.
 - [ ] For now, treat the timer reaching zero as an automatic, temporary "success" (no sensor check yet) and manually stopping as a "cancelled" outcome — this is a placeholder rule you'll replace in Step 6.
 - [ ] **Test:** start a session, let it run to zero, confirm it reports success; start another and tap Stop halfway through, confirm it reports cancelled — both purely from the UI, no sensor involved.
@@ -258,7 +258,7 @@ This phase is deliberately ordered **UI first, sensors last**: build every scree
 - [ ] **Test:** run several full sessions to completion, confirm droplets accumulate and the plant visibly grows through its stages, and that this all survives an app restart. At this point you have a fully clickable, demoable prototype — just without real focus-detection yet.
 
 **Step 6 — Stillness detection: wire in the real sensor** *(the one piece the whole concept depends on — now built against an already-working harness)*
-- [ ] Create `hooks/useStillnessDetector.ts`.
+- [ ] Create `hooks/UseStillnessDetector.ts`.
 - [ ] Subscribe to `Accelerometer.addListener`, update interval ~200–300ms (`Accelerometer.setUpdateInterval(250)`).
 - [ ] Compute magnitude per reading: `sqrt(x² + y² + z²)`; keep a rolling baseline and compare each new reading's deviation against a threshold.
 - [ ] Require a few consecutive over-threshold readings (debounce) before flagging "moved" — a single spike should never fail a session.
@@ -285,7 +285,7 @@ This phase is deliberately ordered **UI first, sensors last**: build every scree
 - [ ] **Test:** share to a real target (e.g. Messages/WhatsApp) on-device and confirm the image looks correct.
 
 **Step 11 — Haptics**
-> UI haptics (selection ticks on the language/plant pickers, a light tap on primary buttons, a soft confirm when onboarding finishes or a plant is chosen) were pulled forward into Steps 2–3 and live in `src/lib/haptics.ts` — that file is the one place to tune intensity. This step is the remaining session-event half.
+> UI haptics (selection ticks on the language/plant pickers, a light tap on primary buttons, a soft confirm when onboarding finishes or a plant is chosen) were pulled forward into Steps 2–3 and live in `src/lib/Haptics.ts` — that file is the one place to tune intensity. This step is the remaining session-event half.
 - [ ] Add `expo-haptics` at: droplet earned, session success, movement/failure warning, and (distinctly, more subtly) manual stop.
 - [ ] **Test:** tune intensity/pattern by feel on-device until success feels rewarding and failure feels like a gentle "oops," not an alarm.
 
@@ -295,7 +295,7 @@ This phase is deliberately ordered **UI first, sensors last**: build every scree
 
 **Step 12 — Firebase project + join codes**
 - [ ] Create a Firebase project; enable Firestore (or Realtime Database).
-- [ ] Add `lib/firebase.ts` with the init + config (git-ignored, see section 8).
+- [ ] Add `lib/Firebase.ts` with the init + config (git-ignored, see section 8).
 - [ ] Build "host a session" (generates a short join code, creates the `sessions/{code}` document from section 6) and "join a session" (enters a code, subscribes to that document).
 - [ ] **Test with two physical devices** (or one device + a teammate/friend) joining the same code.
 

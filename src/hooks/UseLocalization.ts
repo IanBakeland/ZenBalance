@@ -1,7 +1,7 @@
 import en from '@/locales/en.json';
 import nl from '@/locales/nl.json';
 
-import { useZenBalanceStore, type Language } from '@/hooks/use-zenbalance-store';
+import { useZenBalanceStore, type Language } from '@/hooks/UseZenBalanceStore';
 
 /** `nl.json` must have exactly the same keys as `en.json` — TypeScript enforces it here. */
 export type Dictionary = typeof en;

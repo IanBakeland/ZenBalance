@@ -18,12 +18,12 @@ import { PrimaryButton } from './PrimaryButton';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
-import { MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import type { Plant } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
-import { hapticCommit } from '@/lib/haptics';
+import { MinTapTarget, PillRadius, Spacing } from '@/constants/Theme';
+import type { Plant } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
+import { hapticCommit } from '@/lib/Haptics';
 
 const REVEAL_MS = 1400;
 /** Point in the reveal where the silhouette has turned into the real flower. */

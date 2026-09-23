@@ -10,7 +10,7 @@ import Animated, {
 
 import { ThemedText } from './ThemedText';
 
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
 
 function formatRemaining(totalSeconds: number) {
   const seconds = Math.ceil(totalSeconds);

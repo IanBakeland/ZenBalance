@@ -21,22 +21,22 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { SessionCountdown } from '@/components/SessionCountdown';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { findTogetherFlower, TogetherFlowers } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useSessionTimer, type SessionOutcome } from '@/hooks/useSessionTimer';
-import { useStillnessDetector } from '@/hooks/useStillnessDetector';
-import { useTheme } from '@/hooks/use-theme';
-import { useTogetherSession } from '@/hooks/useTogetherSession';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { hapticFailure, hapticMovementWarning, hapticSelect } from '@/lib/haptics';
+import { MinTapTarget, PillRadius, Spacing } from '@/constants/Theme';
+import { findTogetherFlower, TogetherFlowers } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useSessionTimer, type SessionOutcome } from '@/hooks/UseSessionTimer';
+import { useStillnessDetector } from '@/hooks/UseStillnessDetector';
+import { useTheme } from '@/hooks/UseTheme';
+import { useTogetherSession } from '@/hooks/UseTogetherSession';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
+import { hapticFailure, hapticMovementWarning, hapticSelect } from '@/lib/Haptics';
 import {
   confirmSurvived,
   killPlant,
   localFocusStart,
   type TogetherSession,
-} from '@/lib/together';
+} from '@/lib/Together';
 
 /** Loads the shared document, then hands off to the run once there's a shared start. */
 export default function TogetherSessionScreen() {

@@ -2,9 +2,9 @@ import { Pressable, StyleSheet, type PressableProps } from 'react-native';
 
 import { ThemedText } from './ThemedText';
 
-import { MinTapTarget, PillRadius, Spacing, type ThemeMode } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import { hapticTap } from '@/lib/haptics';
+import { MinTapTarget, PillRadius, Spacing, type ThemeMode } from '@/constants/Theme';
+import { useTheme } from '@/hooks/UseTheme';
+import { hapticTap } from '@/lib/Haptics';
 
 export type PrimaryButtonProps = Omit<PressableProps, 'children' | 'style'> & {
   label: string;

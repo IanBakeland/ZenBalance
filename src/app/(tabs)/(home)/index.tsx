@@ -22,12 +22,12 @@ import { PlantView } from '@/components/PlantView';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { findSoloPlant, growthStage } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
+import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/Theme';
+import { findSoloPlant, growthStage } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
 
 export default function HomeScreen() {
   const router = useRouter();

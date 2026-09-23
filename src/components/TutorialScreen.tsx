@@ -31,11 +31,11 @@ import {
   WaterScene,
 } from './TutorialScenes';
 
-import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/theme';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { hapticCommit, hapticSelect } from '@/lib/haptics';
+import { BottomTabInset, MinTapTarget, PillRadius, Spacing } from '@/constants/Theme';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
+import { hapticCommit, hapticSelect } from '@/lib/Haptics';
 
 type Page = { Scene: ComponentType<{ active: boolean }>; title: string; body: string };
 

@@ -16,12 +16,12 @@ import Animated, {
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
-import { PillRadius, Spacing } from '@/constants/theme';
-import { findPlant, type PlantId } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
-import { hapticCommit, hapticSelect } from '@/lib/haptics';
+import { PillRadius, Spacing } from '@/constants/Theme';
+import { findPlant, type PlantId } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
+import { hapticCommit, hapticSelect } from '@/lib/Haptics';
 
 /**
  * The tutorial's illustrations. Each scene is drawn on a 300×300 canvas (the

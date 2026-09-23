@@ -20,13 +20,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, MaxContentWidth, PillRadius, Spacing } from '@/constants/theme';
-import { Plants, type Plant, type PlantSize } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { hapticSelect } from '@/lib/haptics';
+import { BottomTabInset, MaxContentWidth, PillRadius, Spacing } from '@/constants/Theme';
+import { Plants, type Plant, type PlantSize } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
+import { hapticSelect } from '@/lib/Haptics';
 
 type Row = { type: 'section'; size: PlantSize } | { type: 'plant'; plant: Plant; index: number };
 

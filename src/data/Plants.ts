@@ -18,7 +18,7 @@ export type SoloPlant = {
   size: SoloPlantSize;
   /**
    * Droplets needed to reach full bloom, at which point the flower is collected.
-   * A 25-minute session earns 3 (see sessionDurations.ts). These are the
+   * A 25-minute session earns 3 (see SessionDurations.ts). These are the
    * playtesting knob — raise them if flowers bloom too fast.
    */
   dropletsToBloom: number;

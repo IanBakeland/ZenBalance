@@ -1,8 +1,8 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useColorScheme } from 'react-native';
 
-import { Colors } from '@/constants/theme';
-import { useLocalization } from '@/hooks/useLocalization';
+import { Colors } from '@/constants/Theme';
+import { useLocalization } from '@/hooks/UseLocalization';
 
 export default function AppTabs() {
   const { t } = useLocalization();

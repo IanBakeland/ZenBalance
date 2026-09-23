@@ -7,12 +7,12 @@ import Animated, { Easing, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { MinTapTarget, Spacing } from '@/constants/theme';
-import { SoloPlants } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore, type Language } from '@/hooks/use-zenbalance-store';
-import { hapticSelect } from '@/lib/haptics';
+import { MinTapTarget, Spacing } from '@/constants/Theme';
+import { SoloPlants } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore, type Language } from '@/hooks/UseZenBalanceStore';
+import { hapticSelect } from '@/lib/Haptics';
 
 /** Native names, so each option is readable whichever language you arrive with. */
 const LanguageOptions: { code: Language; name: string; greeting: string }[] = [

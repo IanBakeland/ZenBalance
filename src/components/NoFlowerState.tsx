@@ -16,13 +16,13 @@ import Animated, {
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
-import { PillRadius, Spacing } from '@/constants/theme';
-import { Plants, SoloPlants, type SoloPlantSize } from '@/data/plants';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
-import { hapticSelect } from '@/lib/haptics';
+import { PillRadius, Spacing } from '@/constants/Theme';
+import { Plants, SoloPlants, type SoloPlantSize } from '@/data/Plants';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
+import { hapticSelect } from '@/lib/Haptics';
 
 const CYCLE_MS = 2800;
 

@@ -17,13 +17,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { BottomTabInset, MaxContentWidth, PillRadius, Spacing } from '@/constants/theme';
-import { findPlant } from '@/data/plants';
-import { formatDuration } from '@/data/sessionDurations';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useReduceMotion } from '@/hooks/use-reduce-motion';
-import { useTheme } from '@/hooks/use-theme';
-import { useZenBalanceStore } from '@/hooks/use-zenbalance-store';
+import { BottomTabInset, MaxContentWidth, PillRadius, Spacing } from '@/constants/Theme';
+import { findPlant } from '@/data/Plants';
+import { formatDuration } from '@/data/SessionDurations';
+import { useLocalization } from '@/hooks/UseLocalization';
+import { useReduceMotion } from '@/hooks/UseReduceMotion';
+import { useTheme } from '@/hooks/UseTheme';
+import { useZenBalanceStore } from '@/hooks/UseZenBalanceStore';
 
 export default function FlowerDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
